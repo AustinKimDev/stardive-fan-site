@@ -3,8 +3,11 @@ import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import type { PageMeta } from '../lib/seo';
 
-interface Props { meta: PageMeta }
-const { meta } = Astro.props;
+interface Props {
+  meta: PageMeta;
+  dataSection?: string;
+}
+const { meta, dataSection } = Astro.props;
 ---
 <!doctype html>
 <html lang="ko">
@@ -22,13 +25,8 @@ const { meta } = Astro.props;
     <meta property="og:image" content={meta.ogImage} />
     <meta name="twitter:card" content="summary_large_image" />
     {meta.jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(meta.jsonLd)} />}
-    <!-- SUIT Variable: 공식 사이트 폰트 패밀리 연속성 -->
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css" />
-    <!-- Departure Mono: 쿠폰 코드 시그니처 폰트 -->
-    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/departure-mono" />
   </head>
-  <body>
+  <body data-section={dataSection}>
     <Nav />
     <main style="max-width:80rem;margin:0 auto;padding:2rem 1rem"><slot /></main>
     <footer style="max-width:80rem;margin:0 auto;padding:3rem 1rem;font-size:0.75rem;color:var(--fg-dim);border-top:1px solid var(--border);margin-top:4rem">

@@ -1,0 +1,25 @@
+/* ───────────────────────────────────────────────
+   SUIT Variable — SUIT GitHub CDN (공식 배포처)
+   공식 사이트 font-family 체인에 포함된 패밀리
+   ─────────────────────────────────────────────── */
+@import url("https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css");
+
+/* ───────────────────────────────────────────────
+   Departure Mono Regular — 로컬 public/fonts
+   쿠폰 코드 전용 시그니처 모노
+   ─────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Departure Mono';
+  src: url('/fonts/DepartureMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Departure Mono';
+  src: url('/fonts/DepartureMono-Regular.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
