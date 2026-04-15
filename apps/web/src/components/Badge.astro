@@ -1,0 +1,18 @@
+---
+type Variant = 'active' | 'expired' | 'unknown' | 'limited' | 'permanent' | 'urgent' | 'scheduled';
+interface Props { variant: Variant }
+const { variant } = Astro.props;
+
+const styles: Record<Variant, string> = {
+  active: 'background:oklch(0.74 0.12 150 / 0.15);color:oklch(0.74 0.12 150);border-color:oklch(0.74 0.12 150 / 0.4)',
+  expired: 'background:oklch(0.58 0.020 275 / 0.1);color:var(--fg-dim);border-color:var(--border)',
+  unknown: 'background:oklch(0.86 0.085 335 / 0.15);color:var(--accent);border-color:oklch(0.86 0.085 335 / 0.4)',
+  limited: 'background:oklch(0.87 0.055 290 / 0.15);color:var(--accent-alt);border-color:oklch(0.87 0.055 290 / 0.4)',
+  permanent: 'background:oklch(0.87 0.055 290 / 0.1);color:var(--accent-alt);border-color:oklch(0.87 0.055 290 / 0.3)',
+  urgent: 'background:oklch(0.68 0.18 25 / 0.15);color:var(--danger);border-color:oklch(0.68 0.18 25 / 0.4)',
+  scheduled: 'background:oklch(0.87 0.055 290 / 0.1);color:var(--accent-alt);border-color:oklch(0.87 0.055 290 / 0.3)',
+};
+---
+<span style={`display:inline-flex;align-items:center;gap:0.25rem;padding:0.125rem 0.5rem;border-radius:0.25rem;border:1px solid;font-size:0.75rem;font-weight:500;${styles[variant]}`}>
+  <slot />
+</span>

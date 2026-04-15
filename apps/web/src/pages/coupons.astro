@@ -1,0 +1,60 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CouponCard from '../components/CouponCard.astro';
+import { buildMeta } from '../lib/seo';
+
+const all = await getCollection('coupons');
+const coupons = all.map(e => e.data).sort((a, b) => {
+  if (a.status !== b.status) return a.status === 'active' ? -1 : 1;
+  return new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime();
+});
+const active = coupons.filter(c => c.status === 'active');
+const inactive = coupons.filter(c => c.status !== 'active');
+
+const meta = await buildMeta({
+  path: '/coupons',
+  title: `몬길 스타다이브 쿠폰 ${new Date().getFullYear()} — 실시간 검증`,
+  description: `몬스터길들이기 STAR DIVE 최신 쿠폰 ${active.length}개. 복사 한 번에 사용.`,
+  ogImage: '/api/og/coupons.png',
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: active.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'Offer',
+        name: c.code,
+        url: c.redemptionUrl,
+        availability: 'https://schema.org/InStock',
+      },
+    })),
+  },
+});
+---
+<BaseLayout meta={meta}>
+  <h1 style="font-size:clamp(2.25rem, 4.5vw + 1rem, 4.25rem);font-weight:800;letter-spacing:-0.02em;color:var(--fg-primary)">쿠폰 코드</h1>
+  <p style="margin-top:0.5rem;color:var(--fg-muted);font-size:1rem">
+    총 <strong style="color:var(--accent)">{active.length}개</strong> 사용 가능.
+    <a style="color:var(--accent-alt);text-decoration:underline;text-underline-offset:0.25rem"
+       href="https://coupon.netmarble.com/monster2" target="_blank" rel="noreferrer">
+      넷마블 쿠폰 입력 사이트
+    </a>에서 코드 입력.
+  </p>
+
+  <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0" />
+
+  <section style="display:grid;gap:0.75rem;grid-template-columns:repeat(auto-fill,minmax(340px,1fr))" aria-label="사용 가능 쿠폰">
+    {active.map(c => <CouponCard {...c} />)}
+  </section>
+
+  {inactive.length > 0 && (
+    <details style="margin-top:2.5rem;border-top:1px solid var(--border);padding-top:1.5rem">
+      <summary style="cursor:pointer;color:var(--fg-muted);font-size:0.875rem">만료/검증중 쿠폰 ({inactive.length})</summary>
+      <div style="margin-top:1rem;display:grid;gap:0.75rem;grid-template-columns:repeat(auto-fill,minmax(340px,1fr))">
+        {inactive.map(c => <CouponCard {...c} />)}
+      </div>
+    </details>
+  )}
+</BaseLayout>
