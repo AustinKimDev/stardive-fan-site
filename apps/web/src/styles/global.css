@@ -1,0 +1,57 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+:root {
+  --bg-base:       oklch(0.14 0.045 268);
+  --bg-surface:    oklch(0.19 0.045 268);
+  --bg-raised:     oklch(0.24 0.050 280);
+  --border:        oklch(0.34 0.030 275);
+  --border-strong: oklch(0.48 0.040 280);
+
+  --fg-primary:    oklch(0.97 0.008 280);
+  --fg-muted:      oklch(0.78 0.020 280);
+  --fg-dim:        oklch(0.58 0.020 275);
+
+  --accent:        oklch(0.86 0.085 335);
+  --accent-soft:   oklch(0.78 0.070 335);
+  --accent-alt:    oklch(0.87 0.055 290);
+  --accent-deep:   oklch(0.45 0.120 310);
+
+  --danger:        oklch(0.68 0.18 25);
+  --success:       oklch(0.74 0.12 150);
+}
+
+html, body {
+  background: var(--bg-base);
+  color: var(--fg-primary);
+  font-family: 'SUIT Variable', 'SUIT', sans-serif;
+  font-feature-settings: 'kern' 1;
+  line-height: 1.65;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.font-mono, code, pre {
+  font-family: 'Departure Mono', 'Courier New', monospace;
+}
+
+@keyframes ring-pulse {
+  0% { outline-color: oklch(0.87 0.055 290 / 0); outline-width: 2px; }
+  40% { outline-color: oklch(0.87 0.055 290 / 0.8); outline-width: 3px; }
+  100% { outline-color: oklch(0.87 0.055 290 / 0); outline-width: 2px; }
+}
+
+@keyframes copy-rise {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .copy-animate {
+    animation: copy-rise 160ms cubic-bezier(0.22, 1, 0.36, 1) forwards,
+               ring-pulse 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+}
