@@ -1,0 +1,88 @@
+---
+import CharacterChip from './CharacterChip.astro';
+
+type Element = 'fire' | 'ice' | 'earth' | 'wind' | 'thunder';
+type Role = 'brawler' | 'destroyer' | 'assassin' | 'support';
+
+interface Character {
+  name: string;
+  element: Element;
+  role: Role;
+  rarity?: 'SSR' | 'SR' | 'R';
+}
+interface Props {
+  name: string;
+  description?: string;
+  characters: Character[];
+}
+const { name, description, characters } = Astro.props;
+
+const tierAccent: Record<string, string> = {
+  S: 'var(--accent)',
+  A: 'oklch(0.80 0.12 60)',
+  B: 'var(--fg-muted)',
+  C: 'var(--fg-dim)',
+};
+const accent = tierAccent[name] ?? 'var(--fg-muted)';
+---
+
+<style>
+  .tier-strip {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-surface);
+    padding: 1rem 1.25rem;
+    transition: border-color 200ms;
+  }
+  .tier-strip:hover {
+    border-color: var(--border-strong);
+  }
+  .tier-label {
+    font-family: 'Departure Mono', 'Courier New', monospace;
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+    width: 3ch;
+    text-align: center;
+  }
+  .tier-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding-top: 0.25rem;
+  }
+  .tier-description {
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+    line-height: 1.5;
+  }
+  .tier-characters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tier-empty {
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+    font-style: italic;
+  }
+</style>
+
+<div class="tier-strip">
+  <span class="tier-label" style={`color:${accent}`}>{name}</span>
+  <div class="tier-content">
+    {description && <p class="tier-description">{description}</p>}
+    <div class="tier-characters">
+      {characters.length > 0
+        ? characters.map(c => <CharacterChip {...c} />)
+        : <span class="tier-empty">업데이트 예정</span>
+      }
+    </div>
+  </div>
+</div>

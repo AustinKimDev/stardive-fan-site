@@ -1,0 +1,11 @@
+---
+interface Props {
+  margin?: string;
+}
+const { margin = '2rem 0' } = Astro.props;
+---
+<div
+  role="separator"
+  aria-hidden="true"
+  style={`height:1px;background:var(--border);margin:${margin};flex-shrink:0`}
+></div>
