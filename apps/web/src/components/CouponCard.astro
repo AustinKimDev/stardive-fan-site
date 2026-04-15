@@ -12,27 +12,128 @@ interface Props {
   source: string;
 }
 const { code, status, rewards, redemptionUrl, platformNotes, source } = Astro.props;
+
+const badgeLabel = status === 'active' ? '사용 가능' : status === 'expired' ? '만료' : '검증중';
 ---
-<article style="padding:1rem;border-radius:0.75rem;border:1px solid var(--border);background:var(--bg-surface);display:flex;flex-direction:column;gap:0.75rem;container-type:inline-size">
-  <header style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap">
-    <code style="font-family:'Departure Mono','Courier New',monospace;font-size:1.25rem;font-weight:700;letter-spacing:0.05em;color:var(--fg-primary)">{code}</code>
-    <Badge variant={status}>{status === 'active' ? '사용 가능' : status === 'expired' ? '만료' : '검증중'}</Badge>
-  </header>
-  <ul style="font-size:0.875rem;color:var(--fg-muted);display:flex;flex-wrap:wrap;gap:0.5rem 1rem;list-style:none;margin:0;padding:0">
-    {rewards.map(r => (
-      <li>{r.name} ×{r.qty.toLocaleString('ko-KR')}</li>
-    ))}
-  </ul>
-  <div style="display:flex;align-items:center;gap:0.5rem;margin-top:auto">
-    <CopyButton client:load value={code} />
-    <a href={redemptionUrl} target="_blank" rel="noreferrer"
-       style="font-size:0.75rem;color:var(--fg-dim);text-decoration:underline;text-underline-offset:0.25rem">
-      입력 사이트 →
-    </a>
+
+<style>
+  .coupon-card {
+    container-type: inline-size;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+    transition: border-color 200ms;
+  }
+  .coupon-card:hover {
+    border-color: var(--border-strong);
+    background: var(--bg-raised);
+  }
+  .coupon-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem 1rem 0;
+  }
+  .coupon-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .coupon-code {
+    display: block;
+    font-family: 'Departure Mono', 'Courier New', monospace;
+    font-size: clamp(2rem, 8vw, 4.5rem);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg-primary);
+    line-height: 1;
+    text-align: center;
+    word-break: break-all;
+    padding: 0.5rem 0;
+  }
+  .coupon-rewards {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0;
+    font-size: 0.75rem;
+    color: var(--fg-muted);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .coupon-rewards li + li::before {
+    content: ' · ';
+    padding: 0 0.2em;
+    color: var(--fg-dim);
+  }
+  .coupon-copy-btn {
+    margin: 0.5rem 0 0;
+    width: 100%;
+  }
+  .coupon-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid var(--border);
+    background: oklch(0.14 0.045 268 / 0.5);
+  }
+  .coupon-meta a {
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+    text-decoration: none;
+    transition: color 150ms;
+  }
+  .coupon-meta a:hover {
+    color: var(--fg-muted);
+  }
+  .coupon-platform-note {
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+    padding: 0 1rem 0.25rem;
+    font-style: italic;
+  }
+</style>
+
+<article class="coupon-card">
+  <div class="coupon-inner">
+    <!-- 상태 배지 -->
+    <header class="coupon-header">
+      <Badge variant={status}>{badgeLabel}</Badge>
+      {platformNotes && (
+        <abbr title={platformNotes} style="text-decoration:none;cursor:help;font-size:0.75rem;color:var(--fg-dim)">※</abbr>
+      )}
+    </header>
+
+    <!-- 쿠폰 코드 시그니처 — Departure Mono 대형 -->
+    <code class="coupon-code">{code}</code>
+
+    <!-- 보상 목록 — 수평 · 구분 -->
+    <ul class="coupon-rewards">
+      {rewards.map(r => (
+        <li>{r.name} ×{r.qty.toLocaleString('ko-KR')}</li>
+      ))}
+    </ul>
+
+    <!-- 전폭 복사 버튼 -->
+    <div class="coupon-copy-btn">
+      <CopyButton client:load value={code} fullWidth />
+    </div>
   </div>
-  {platformNotes && <p style="font-size:0.75rem;color:var(--fg-dim);margin:0">{platformNotes}</p>}
-  <a href={source} target="_blank" rel="noreferrer"
-     style="font-size:0.6875rem;color:var(--fg-dim);text-decoration:none;align-self:flex-end;opacity:0.6">
-    출처
-  </a>
+
+  <!-- 하단 메타 링크 -->
+  <footer class="coupon-meta">
+    <a href={redemptionUrl} target="_blank" rel="noreferrer noopener">
+      입력 사이트 ↗
+    </a>
+    <a href={source} target="_blank" rel="noreferrer noopener">
+      출처 ↗
+    </a>
+  </footer>
 </article>

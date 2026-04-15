@@ -4,15 +4,25 @@ interface Props { variant: Variant }
 const { variant } = Astro.props;
 
 const styles: Record<Variant, string> = {
-  active: 'background:oklch(0.74 0.12 150 / 0.15);color:oklch(0.74 0.12 150);border-color:oklch(0.74 0.12 150 / 0.4)',
-  expired: 'background:oklch(0.58 0.020 275 / 0.1);color:var(--fg-dim);border-color:var(--border)',
-  unknown: 'background:oklch(0.86 0.085 335 / 0.15);color:var(--accent);border-color:oklch(0.86 0.085 335 / 0.4)',
-  limited: 'background:oklch(0.87 0.055 290 / 0.15);color:var(--accent-alt);border-color:oklch(0.87 0.055 290 / 0.4)',
-  permanent: 'background:oklch(0.87 0.055 290 / 0.1);color:var(--accent-alt);border-color:oklch(0.87 0.055 290 / 0.3)',
-  urgent: 'background:oklch(0.68 0.18 25 / 0.15);color:var(--danger);border-color:oklch(0.68 0.18 25 / 0.4)',
-  scheduled: 'background:oklch(0.87 0.055 290 / 0.1);color:var(--accent-alt);border-color:oklch(0.87 0.055 290 / 0.3)',
+  /* active — 피치 핑크 (브랜드 일관성, 스펙 §4) */
+  active:
+    'background:oklch(0.86 0.085 335 / 0.15);color:var(--accent);border:1px solid oklch(0.86 0.085 335 / 0.5)',
+  /* expired — 채움 없음, dim 테두리만 */
+  expired:
+    'background:transparent;color:var(--fg-dim);border:1px solid var(--border)',
+  /* unknown — 페리윙클 테두리, 점선 */
+  unknown:
+    'background:transparent;color:var(--accent-alt);border:1px dashed oklch(0.87 0.055 290 / 0.6)',
+  limited:
+    'background:oklch(0.87 0.055 290 / 0.12);color:var(--accent-alt);border:1px solid oklch(0.87 0.055 290 / 0.4)',
+  permanent:
+    'background:oklch(0.87 0.055 290 / 0.08);color:var(--accent-alt);border:1px solid oklch(0.87 0.055 290 / 0.3)',
+  urgent:
+    'background:oklch(0.68 0.18 25 / 0.12);color:var(--danger);border:1px solid oklch(0.68 0.18 25 / 0.4)',
+  scheduled:
+    'background:oklch(0.87 0.055 290 / 0.08);color:var(--accent-alt);border:1px solid oklch(0.87 0.055 290 / 0.3)',
 };
 ---
-<span style={`display:inline-flex;align-items:center;gap:0.25rem;padding:0.125rem 0.5rem;border-radius:0.25rem;border:1px solid;font-size:0.75rem;font-weight:500;${styles[variant]}`}>
+<span style={`display:inline-flex;align-items:center;gap:0.25rem;padding:0.1rem 0.4rem;border-radius:2px;font-size:0.6875rem;font-weight:500;letter-spacing:0.03em;line-height:1em;${styles[variant]}`}>
   <slot />
 </span>
