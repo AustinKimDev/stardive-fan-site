@@ -1,0 +1,38 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import type { PageMeta } from '../lib/seo';
+
+interface Props { meta: PageMeta }
+const { meta } = Astro.props;
+---
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{meta.title}</title>
+    <meta name="description" content={meta.description} />
+    <link rel="canonical" href={meta.canonical} />
+    {meta.noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:type" content={meta.type} />
+    <meta property="og:title" content={meta.title} />
+    <meta property="og:description" content={meta.description} />
+    <meta property="og:url" content={meta.canonical} />
+    <meta property="og:image" content={meta.ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {meta.jsonLd && <script type="application/ld+json" set:html={JSON.stringify(meta.jsonLd)} />}
+    <!-- SUIT Variable: 공식 사이트 폰트 패밀리 연속성 -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css" />
+    <!-- Departure Mono: 쿠폰 코드 시그니처 폰트 -->
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/departure-mono" />
+  </head>
+  <body>
+    <Nav />
+    <main style="max-width:80rem;margin:0 auto;padding:2rem 1rem"><slot /></main>
+    <footer style="max-width:80rem;margin:0 auto;padding:3rem 1rem;font-size:0.75rem;color:var(--fg-dim);border-top:1px solid var(--border);margin-top:4rem">
+      © 2026 stardive-fan-site — 비공식 팬사이트. 「몬길: STAR DIVE」 © Netmarble.
+    </footer>
+  </body>
+</html>
