@@ -1,0 +1,41 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { buildMeta } from '../lib/seo';
+import { formatDateIso } from '../lib/format';
+
+const entries = await getCollection('tier');
+const latest = entries.sort((a, b) =>
+  new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime()
+)[0];
+if (!latest) throw new Error('티어 문서가 content/tier에 없습니다');
+const { Content } = await render(latest);
+const d = latest.data;
+
+const meta = await buildMeta({
+  path: '/tier',
+  title: d.title,
+  description: d.summary,
+  type: 'article',
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: d.title,
+    datePublished: d.publishedAt,
+    author: { '@type': 'Organization', name: 'stardive-fan-site' },
+  },
+});
+---
+<BaseLayout meta={meta}>
+  <header style="margin-bottom:1.5rem">
+    <h1 style="font-size:clamp(2.25rem, 4.5vw + 1rem, 4.25rem);font-weight:800;letter-spacing:-0.02em;color:var(--fg-primary)">{d.title}</h1>
+    <p style="color:var(--fg-dim);margin-top:0.5rem;font-size:0.875rem;font-family:'Departure Mono','Courier New',monospace">
+      v{d.version} · {formatDateIso(d.publishedAt)} · {d.context}
+    </p>
+    <p style="color:var(--fg-muted);margin-top:1rem;font-size:1rem;max-inline-size:68ch">{d.summary}</p>
+  </header>
+  <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0" />
+  <article class="prose prose-invert" style="max-inline-size:68ch;line-height:1.65">
+    <Content />
+  </article>
+</BaseLayout>
