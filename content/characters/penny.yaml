@@ -1,0 +1,16 @@
+# 5성 픽업 캐릭터 — 페니 (세레니아)
+slug: penny
+name_ko: 페니
+name_en: Penny
+region: serenia
+element: thunder
+style: brawler
+rarity: 5seong
+role: "번개 브롤러 전사"
+cv_kr: null
+cv_jp: null
+description: "세레니아 출신의 번개 속성 브롤러. 번개처럼 빠른 주먹으로 근거리를 제압한다. 출시 픽업 배너 5성."
+portrait: /assets/characters/portrait/penny.png
+full: /assets/characters/full/penny.png
+source_url: https://guide.netmarble.com/monster2
+tierS: true

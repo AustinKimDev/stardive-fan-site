@@ -3,12 +3,13 @@ import CharacterChip from './CharacterChip.astro';
 
 type Element = 'fire' | 'ice' | 'earth' | 'wind' | 'thunder';
 type Role = 'brawler' | 'destroyer' | 'assassin' | 'support';
+type Rarity = '5seong' | '4seong' | '3seong' | 'unknown';
 
 interface Character {
   name: string;
   element: Element;
   role: Role;
-  rarity?: 'SSR' | 'SR' | 'R';
+  rarity?: Rarity;
   slug?: string;
 }
 interface Props {

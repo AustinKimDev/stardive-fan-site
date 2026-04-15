@@ -3,19 +3,22 @@ import RarityBadge from './RarityBadge.astro';
 
 type Element = 'fire' | 'ice' | 'earth' | 'wind' | 'thunder';
 type Style = 'brawler' | 'destroyer' | 'assassin' | 'support';
+type Rarity = '5seong' | '4seong' | '3seong' | 'unknown';
+type Region = 'ellendor' | 'barein' | 'serenia' | 'sura' | 'namryeong';
 
 interface Props {
   slug: string;
   name_ko: string;
   name_en: string;
-  element: Element;
-  style: Style;
-  rarity: 'SSR' | 'SR' | 'R';
-  role: string;
-  portrait: string;
+  element?: Element | null;
+  style?: Style | null;
+  rarity: Rarity;
+  role?: string | null;
+  portrait?: string | null;
+  region: Region;
 }
 
-const { slug, name_ko, name_en, element, style: charStyle, rarity, role, portrait } = Astro.props;
+const { slug, name_ko, name_en, element, style: charStyle, rarity, role, portrait, region } = Astro.props;
 
 const elementColor: Record<Element, string> = {
   fire:    'var(--el-fire)',
@@ -31,6 +34,10 @@ const elementLabel: Record<Element, string> = {
 
 const styleLabel: Record<Style, string> = {
   brawler: '브롤러', destroyer: '파괴자', assassin: '암살자', support: '서포터',
+};
+
+const regionLabel: Record<Region, string> = {
+  ellendor: '엘렌도르', barein: '바레인', serenia: '세레니아', sura: '수라', namryeong: '남령',
 };
 ---
 
@@ -69,15 +76,34 @@ const styleLabel: Record<Style, string> = {
   .char-card:hover .char-portrait img {
     transform: scale(1.02);
   }
+  /* 플레이스홀더: "이미지 준비중" 해칭 패턴 */
   .char-portrait-placeholder {
     width: 100%;
     height: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
+    gap: 6px;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 4px,
+      oklch(0.19 0.020 260 / 0.6) 4px,
+      oklch(0.19 0.020 260 / 0.6) 5px
+    );
+    background-color: var(--bg-surface);
+  }
+  .placeholder-label {
+    font-size: 0.6875rem;
     color: var(--fg-dim);
     font-family: 'Departure Mono', monospace;
+    letter-spacing: 0.02em;
+    text-align: center;
+    padding: 4px 8px;
+    background: oklch(0.11 0.018 260 / 0.8);
+    border: 1px solid var(--border);
+    border-radius: 2px;
   }
   .char-el-dot {
     position: absolute;
@@ -127,6 +153,9 @@ const styleLabel: Record<Style, string> = {
     border-color: currentColor;
     opacity: 0.8;
   }
+  .char-chip--region {
+    color: var(--fg-dim);
+  }
   .char-role {
     font-size: 0.6875rem;
     color: var(--fg-dim);
@@ -139,8 +168,14 @@ const styleLabel: Record<Style, string> = {
 
 <a class="char-card" href={`/characters/${slug}`}>
   <div class="char-portrait">
-    <img src={portrait} alt={name_ko} loading="lazy" />
-    <span class="char-el-dot" style={`background:${elementColor[element]}`} aria-hidden="true"></span>
+    {portrait ? (
+      <img src={portrait} alt={name_ko} loading="lazy" decoding="async" />
+    ) : (
+      <div class="char-portrait-placeholder" role="img" aria-label={`${name_ko} 이미지 준비중`}>
+        <span class="placeholder-label">이미지 준비중</span>
+      </div>
+    )}
+    {element && <span class="char-el-dot" style={`background:${elementColor[element]}`} aria-hidden="true"></span>}
   </div>
   <div class="char-info">
     <div class="char-name-row">
@@ -148,11 +183,14 @@ const styleLabel: Record<Style, string> = {
       <RarityBadge rarity={rarity} />
     </div>
     <div class="char-chips">
-      <span class="char-chip char-chip--element" style={`color:${elementColor[element]}`}>
-        {elementLabel[element]}
-      </span>
-      <span class="char-chip">{styleLabel[charStyle]}</span>
+      {element && (
+        <span class="char-chip char-chip--element" style={`color:${elementColor[element]}`}>
+          {elementLabel[element]}
+        </span>
+      )}
+      {charStyle && <span class="char-chip">{styleLabel[charStyle]}</span>}
+      <span class="char-chip char-chip--region">{regionLabel[region]}</span>
     </div>
-    <span class="char-role">{role}</span>
+    {role && <span class="char-role">{role}</span>}
   </div>
 </a>

@@ -1,12 +1,13 @@
 ---
 type Element = 'fire' | 'ice' | 'earth' | 'wind' | 'thunder';
 type Role = 'brawler' | 'destroyer' | 'assassin' | 'support';
+type Rarity = '5seong' | '4seong' | '3seong' | 'unknown';
 
 interface Props {
   name: string;
   element: Element;
   role: Role;
-  rarity?: 'SSR' | 'SR' | 'R';
+  rarity?: Rarity;
   slug?: string;
   portrait?: string;
 }
@@ -22,6 +23,20 @@ const elementColor: Record<Element, string> = {
 
 const elementLabel: Record<Element, string> = {
   fire: '불', ice: '얼음', earth: '땅', wind: '바람', thunder: '번개',
+};
+
+const rarityLabel: Record<Rarity, string> = {
+  '5seong': '5성',
+  '4seong': '4성',
+  '3seong': '3성',
+  'unknown': '?',
+};
+
+const rarityColor: Record<Rarity, string> = {
+  '5seong': 'var(--accent-gold)',
+  '4seong': 'var(--accent)',
+  '3seong': 'var(--fg-dim)',
+  'unknown': 'var(--fg-dim)',
 };
 
 const portraitSrc = portrait ?? (slug ? `/assets/characters/portrait/${slug}.png` : null);
@@ -63,9 +78,14 @@ const color = elementColor[element];
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.625rem;
+    font-size: 0.5rem;
     color: var(--fg-dim);
     font-family: 'Departure Mono', monospace;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent, transparent 3px,
+      oklch(0.19 0.020 260 / 0.5) 3px, oklch(0.19 0.020 260 / 0.5) 4px
+    );
   }
   .chip-el-dot {
     position: absolute;
@@ -86,7 +106,6 @@ const color = elementColor[element];
     letter-spacing: 0.04em;
     padding: 1px 0;
     background: oklch(0.08 0.010 260 / 0.85);
-    color: var(--accent-gold);
     line-height: 1;
   }
   .chip-name {
@@ -125,15 +144,19 @@ const color = elementColor[element];
   }
   .chip-text-name { font-weight: 600; }
   .chip-text-meta { color: var(--fg-dim); font-size: 0.6875rem; }
-  .chip-text-rarity { color: var(--accent-gold); font-size: 0.6875rem; font-weight: 700; }
+  .chip-text-rarity { font-size: 0.6875rem; font-weight: 700; }
 </style>
 
 {portraitSrc ? (
   <a class="chip-portrait" href={slug ? `/characters/${slug}` : undefined} title={`${name} — ${elementLabel[element]}`}>
     <div class="chip-img-wrap">
-      <img class="chip-img" src={portraitSrc} alt={name} loading="lazy" />
+      <img class="chip-img" src={portraitSrc} alt={name} loading="lazy" decoding="async" />
       <span class="chip-el-dot" style={`background:${color}`} aria-hidden="true"></span>
-      {rarity === 'SSR' && <span class="chip-rarity">SSR</span>}
+      {rarity && rarity !== '3seong' && (
+        <span class="chip-rarity" style={`color:${rarityColor[rarity]}`}>
+          {rarityLabel[rarity]}
+        </span>
+      )}
     </div>
     <span class="chip-name">{name}</span>
   </a>
@@ -142,6 +165,6 @@ const color = elementColor[element];
     <span class="chip-text-dot" style={`background:${color}`} aria-hidden="true"></span>
     <span class="chip-text-name">{name}</span>
     <span class="chip-text-meta">{elementLabel[element]}</span>
-    {rarity && <span class="chip-text-rarity">{rarity}</span>}
+    {rarity && <span class="chip-text-rarity" style={`color:${rarityColor[rarity]}`}>{rarityLabel[rarity]}</span>}
   </div>
 )}

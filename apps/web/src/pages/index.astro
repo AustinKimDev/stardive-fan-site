@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CouponMiniCard from '../components/CouponMiniCard.astro';
 import CharacterChip from '../components/CharacterChip.astro';
+import RarityBadge from '../components/RarityBadge.astro';
 import { buildMeta } from '../lib/seo';
 
 const allCoupons = await getCollection('coupons');
@@ -20,13 +21,37 @@ const tierData = topTier?.data.tiers ?? [];
 const sTierChars = tierData.find(t => t.name === 'S')?.characters ?? [];
 
 const allCharacters = await getCollection('characters');
-const characters = allCharacters.map(e => e.data);
+const rarityOrder: Record<string, number> = { '5seong': 0, 'unknown': 1, '4seong': 2, '3seong': 3 };
+const characters = allCharacters
+  .map(e => e.data)
+  .sort((a, b) => {
+    const ro = (rarityOrder[a.rarity] ?? 9) - (rarityOrder[b.rarity] ?? 9);
+    if (ro !== 0) return ro;
+    return a.name_ko.localeCompare(b.name_ko, 'ko');
+  });
 const characterCount = characters.length;
 
-// 날짜 기준: 출시일 2026-04-15
+// 홈 하이라이트: 5성 6인
+const featuredChars = characters.filter(c => c.rarity === '5seong' && c.portrait).slice(0, 6);
+
+// 주목 아티팩트: 5성 3개
+const allArtifacts = await getCollection('artifacts');
+const feat5Artifacts = allArtifacts
+  .map(e => e.data)
+  .filter(a => a.rarity === '5seong')
+  .slice(0, 3);
+
+// 캐릭터 이름 맵
+const charMap = Object.fromEntries(allCharacters.map(e => [e.data.slug, e.data.name_ko]));
+
+// 날짜
 const launchDate = new Date('2026-04-15');
 const today = new Date('2026-04-15');
 const daysSince = Math.floor((today.getTime() - launchDate.getTime()) / 86400000) + 1;
+
+const regionLabel: Record<string, string> = {
+  ellendor: '엘렌도르', barein: '바레인', serenia: '세레니아', sura: '수라', namryeong: '남령',
+};
 
 const meta = buildMeta({
   path: '/',
@@ -44,14 +69,33 @@ const meta = buildMeta({
 ---
 
 <style>
-  /* ─── Row 1: 히어로 미니 스트립 ─── */
+  /* ─── 히어로 배경 레이어 ─── */
+  .hero-section {
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    opacity: 0.12;
+    filter: blur(2px);
+    pointer-events: none;
+    z-index: 0;
+    transform: scale(1.04); /* blur 가장자리 보정 */
+  }
   .hero-strip {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: 1fr auto auto;
     align-items: center;
     gap: 12px;
-    padding: 10px 0 10px;
-    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
   }
   .hero-left {
     display: flex;
@@ -65,7 +109,6 @@ const meta = buildMeta({
     object-fit: contain;
     flex-shrink: 0;
   }
-  .hero-text {}
   .hero-title {
     font-size: 1.25rem;
     font-weight: 800;
@@ -87,6 +130,7 @@ const meta = buildMeta({
     border: 1px solid var(--border);
     border-radius: 2px;
     overflow: hidden;
+    background: oklch(0.11 0.018 260 / 0.7);
   }
   .counter-item {
     display: flex;
@@ -119,13 +163,14 @@ const meta = buildMeta({
     white-space: nowrap;
     transition: background 150ms, color 150ms;
     flex-shrink: 0;
+    background: oklch(0.11 0.018 260 / 0.7);
   }
   .hero-cta:hover {
     background: oklch(0.76 0.14 220 / 0.1);
   }
 
-  /* ─── Row 2: 쿠폰 스크롤 스트립 ─── */
-  .coupon-section {
+  /* ─── 공통 섹션 레이아웃 ─── */
+  .section {
     padding: 10px 0;
     border-bottom: 1px solid var(--border);
   }
@@ -149,9 +194,9 @@ const meta = buildMeta({
     text-decoration: none;
     transition: color 150ms;
   }
-  .section-more:hover {
-    color: var(--accent);
-  }
+  .section-more:hover { color: var(--accent); }
+
+  /* ─── 쿠폰 스크롤 ─── */
   .coupon-scroll {
     display: flex;
     gap: 8px;
@@ -161,18 +206,109 @@ const meta = buildMeta({
     scrollbar-width: thin;
     scrollbar-color: var(--border) transparent;
   }
-  .coupon-scroll::-webkit-scrollbar {
-    height: 4px;
+  .coupon-scroll::-webkit-scrollbar { height: 4px; }
+  .coupon-scroll::-webkit-scrollbar-track { background: transparent; }
+  .coupon-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ─── 캐릭터 하이라이트 ─── */
+  .char-highlight-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    align-items: start;
   }
-  .coupon-scroll::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .coupon-scroll::-webkit-scrollbar-thumb {
-    background: var(--border);
+  .char-highlight-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid var(--border);
     border-radius: 2px;
+    overflow: hidden;
+    background: var(--bg-surface);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 150ms, background 150ms;
+  }
+  .char-highlight-card:hover {
+    border-color: var(--accent);
+    background: var(--bg-raised);
+  }
+  .char-hl-portrait {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+  }
+  .char-hl-info {
+    padding: 5px 6px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-top: 1px solid var(--border);
+  }
+  .char-hl-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3px;
+  }
+  .char-hl-name {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--fg-primary);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .char-hl-region {
+    font-size: 0.5625rem;
+    color: var(--fg-dim);
+    font-weight: 500;
+    white-space: nowrap;
   }
 
-  /* ─── Row 3: 캐릭터 + 티어 2컬럼 ─── */
+  /* ─── 주목 아티팩트 ─── */
+  .artifact-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .artifact-card {
+    flex: 1;
+    min-width: 160px;
+    padding: 10px 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: border-color 150ms;
+    text-decoration: none;
+    color: inherit;
+  }
+  .artifact-card:hover {
+    border-color: var(--accent-gold);
+  }
+  .artifact-name {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--fg-primary);
+    line-height: 1.3;
+  }
+  .artifact-exclusive {
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+  }
+  .artifact-exclusive span {
+    color: var(--accent);
+  }
+
+  /* ─── 하단 2컬럼 ─── */
   .bottom-row {
     display: grid;
     grid-template-columns: 3fr 2fr;
@@ -217,7 +353,7 @@ const meta = buildMeta({
     align-items: flex-start;
   }
 
-  /* 티어 S 목록 */
+  /* S 티어 목록 */
   .s-tier-list {
     display: flex;
     flex-direction: column;
@@ -272,7 +408,12 @@ const meta = buildMeta({
     text-align: center;
   }
 
-  /* 모바일 */
+  /* 반응형 */
+  @media (max-width: 1024px) {
+    .char-highlight-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
   @media (max-width: 768px) {
     .hero-strip {
       grid-template-columns: 1fr;
@@ -284,51 +425,67 @@ const meta = buildMeta({
     .bottom-row {
       grid-template-columns: 1fr;
     }
+    .char-highlight-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
   @media (max-width: 480px) {
     .counter-item {
       padding: 4px 7px;
     }
+    .char-highlight-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 </style>
 
 <BaseLayout meta={meta}>
-  <!-- Row 1: 히어로 미니 스트립 -->
-  <div class="hero-strip">
-    <div class="hero-left">
-      <img src="/assets/brand/logo.png" alt="STAR DIVE" class="hero-logo" />
-      <div class="hero-text">
-        <h1 class="hero-title">팬 정보 허브</h1>
-        <p class="hero-tagline">몬길: STAR DIVE 비공식 팬사이트</p>
+  <!-- Row 1: 히어로 (배경 이미지 레이어) -->
+  <div class="hero-section">
+    <img
+      class="hero-bg"
+      src="/assets/backgrounds/bg-01.jpg"
+      alt=""
+      aria-hidden="true"
+      loading="eager"
+      decoding="async"
+    />
+    <div class="hero-strip">
+      <div class="hero-left">
+        <img src="/assets/brand/logo.png" alt="STAR DIVE" class="hero-logo" width="40" height="40" />
+        <div>
+          <h1 class="hero-title">팬 정보 허브</h1>
+          <p class="hero-tagline">몬길: STAR DIVE 비공식 팬사이트</p>
+        </div>
       </div>
-    </div>
 
-    <div class="hero-counters" role="status" aria-label="사이트 통계">
-      <div class="counter-item">
-        <span class="counter-num">{activeCouponCount}</span>
-        <span class="counter-lbl">쿠폰</span>
+      <div class="hero-counters" role="status" aria-label="사이트 통계">
+        <div class="counter-item">
+          <span class="counter-num">{activeCouponCount}</span>
+          <span class="counter-lbl">쿠폰</span>
+        </div>
+        <div class="counter-item">
+          <span class="counter-num">{characterCount}</span>
+          <span class="counter-lbl">캐릭터</span>
+        </div>
+        <div class="counter-item">
+          <span class="counter-num">1</span>
+          <span class="counter-lbl">티어</span>
+        </div>
+        <div class="counter-item">
+          <span class="counter-num">{daysSince}</span>
+          <span class="counter-lbl">일차</span>
+        </div>
       </div>
-      <div class="counter-item">
-        <span class="counter-num">{characterCount}</span>
-        <span class="counter-lbl">캐릭터</span>
-      </div>
-      <div class="counter-item">
-        <span class="counter-num">1</span>
-        <span class="counter-lbl">티어</span>
-      </div>
-      <div class="counter-item">
-        <span class="counter-num">{daysSince}</span>
-        <span class="counter-lbl">일차</span>
-      </div>
-    </div>
 
-    <a href="https://stardive.netmarble.com/ko" target="_blank" rel="noreferrer" class="hero-cta">
-      게임 시작 ↗
-    </a>
+      <a href="https://stardive.netmarble.com/ko" target="_blank" rel="noreferrer" class="hero-cta">
+        게임 시작 ↗
+      </a>
+    </div>
   </div>
 
-  <!-- Row 2: 쿠폰 스크롤 스트립 -->
-  <div class="coupon-section">
+  <!-- Row 2: 쿠폰 스크롤 -->
+  <div class="section">
     <div class="section-bar">
       <span class="section-label">쿠폰</span>
       <a href="/coupons" class="section-more">전체 보기 →</a>
@@ -350,24 +507,77 @@ const meta = buildMeta({
     </div>
   </div>
 
-  <!-- Row 3: 캐릭터 그리드 + 티어 미리보기 -->
+  <!-- Row 3: 캐릭터 하이라이트 (5성 6인) -->
+  {featuredChars.length > 0 && (
+    <div class="section">
+      <div class="section-bar">
+        <span class="section-label">주목 캐릭터</span>
+        <a href="/characters" class="section-more">도감 전체 →</a>
+      </div>
+      <div class="char-highlight-grid" role="list" aria-label="주목 캐릭터">
+        {featuredChars.map(c => (
+          <a class="char-highlight-card" href={`/characters/${c.slug}`} role="listitem">
+            <img
+              class="char-hl-portrait"
+              src={c.portrait ?? ''}
+              alt={c.name_ko}
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="char-hl-info">
+              <div class="char-hl-name-row">
+                <span class="char-hl-name">{c.name_ko}</span>
+                <RarityBadge rarity={c.rarity} />
+              </div>
+              <span class="char-hl-region">{regionLabel[c.region]}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <!-- Row 4: 주목 아티팩트 -->
+  {feat5Artifacts.length > 0 && (
+    <div class="section">
+      <div class="section-bar">
+        <span class="section-label">주목 아티팩트</span>
+        <a href="/artifacts" class="section-more">전체 →</a>
+      </div>
+      <div class="artifact-row" role="list" aria-label="주목 아티팩트">
+        {feat5Artifacts.map(a => (
+          <a class="artifact-card" href="/artifacts" role="listitem">
+            <RarityBadge rarity={a.rarity} />
+            <span class="artifact-name">{a.name_ko}</span>
+            {a.exclusive_character_slug ? (
+              <span class="artifact-exclusive">전용: <span>{charMap[a.exclusive_character_slug] ?? a.exclusive_character_slug}</span></span>
+            ) : (
+              <span class="artifact-exclusive" style="color:var(--fg-dim)">전용 캐릭터 미확인</span>
+            )}
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <!-- Row 5: 캐릭터 칩 + S 티어 2컬럼 -->
   <div class="bottom-row">
-    <!-- 캐릭터 -->
+    <!-- 캐릭터 전체 칩 -->
     <div class="panel">
       <div class="panel-header">
-        <h2 class="panel-title">캐릭터</h2>
+        <h2 class="panel-title">캐릭터 ({characterCount}인)</h2>
         <a href="/characters" class="panel-link">도감 →</a>
       </div>
       <div class="panel-body">
         <div class="char-row">
-          {characters.map(c => (
+          {characters.filter(c => c.portrait && c.element && c.style).map(c => (
             <CharacterChip
               name={c.name_ko}
-              element={c.element}
-              role={c.style}
+              element={c.element!}
+              role={c.style!}
               rarity={c.rarity}
               slug={c.slug}
-              portrait={c.portrait}
+              portrait={c.portrait ?? undefined}
             />
           ))}
         </div>
@@ -394,6 +604,7 @@ const meta = buildMeta({
                     src={`/assets/characters/portrait/${c.slug}.png`}
                     alt={c.name}
                     loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <div class="s-tier-portrait" style="display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:var(--fg-dim)">?</div>
@@ -402,7 +613,9 @@ const meta = buildMeta({
                   <div class="s-tier-name">{c.name}</div>
                   <div class="s-tier-meta">{c.element} · {c.role}</div>
                 </div>
-                <span class="s-tier-badge">S</span>
+                {c.rarity && <span class="s-tier-badge">
+                  {c.rarity === '5seong' ? '5성' : c.rarity === '4seong' ? '4성' : '?'}
+                </span>}
               </a>
             ))}
           </div>

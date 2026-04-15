@@ -175,6 +175,25 @@ const contextTabs = [
     padding-top: 8px;
     margin-top: 8px;
   }
+
+  /* 배경 이미지 분위기 */
+  .tier-bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .tier-bg-layer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0.08;
+  }
+  .tier-content-wrapper {
+    position: relative;
+    z-index: 1;
+  }
 </style>
 
 <BaseLayout
@@ -183,6 +202,12 @@ const contextTabs = [
   sidebarTitle="티어"
   sidebarItems={sidebarItems}
 >
+  <!-- 분위기 배경 (fixed, pointer-events none) -->
+  <div class="tier-bg-layer" aria-hidden="true">
+    <img src="/assets/backgrounds/bg-03.jpg" alt="" loading="lazy" decoding="async" />
+  </div>
+
+  <div class="tier-content-wrapper">
   <div class="tier-page-header">
     <div class="tier-title-block">
       <h1 class="tier-title">{d.title}</h1>
@@ -232,5 +257,8 @@ const contextTabs = [
     <span>UPDATED {formatDateIso(d.publishedAt)}</span>
     <span>·</span>
     <span>{d.context.toUpperCase()}</span>
+    <span>·</span>
+    <span>업데이트: 2026-04-15 · 출시 당일 초안</span>
   </div>
+  </div>{/* tier-content-wrapper */}
 </BaseLayout>

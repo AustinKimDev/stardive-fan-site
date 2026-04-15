@@ -1,0 +1,16 @@
+# 5성 픽업 캐릭터 — 가비 (수라)
+slug: gabi
+name_ko: 가비
+name_en: Gabi
+region: sura
+element: earth
+style: brawler
+rarity: 5seong
+role: "대지 브롤러 전사"
+cv_kr: null
+cv_jp: null
+description: "수라 출신의 대지 속성 브롤러. 대지의 힘을 빌려 강력한 근접 전투를 펼친다. 출시 픽업 배너 5성."
+portrait: /assets/characters/portrait/gabi.png
+full: /assets/characters/full/gabi.png
+source_url: https://guide.netmarble.com/monster2
+tierS: true

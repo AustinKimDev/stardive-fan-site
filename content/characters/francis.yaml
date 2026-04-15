@@ -1,14 +1,14 @@
-# verify: element/style 공식 확인 필요
+# 4성 — 프란시스 (엘렌도르) — 전용 아티팩트: 넘쳐 흐르는 사랑 (LOVEMONGIL 쿠폰 보상)
 slug: francis
 name_ko: 프란시스
 name_en: Francis
 region: ellendor
 element: earth
 style: destroyer
-rarity: SSR
+rarity: 4seong
 role: "대지 파괴 탱커"
-cv_kr: ""
-cv_jp: ""
+cv_kr: null
+cv_jp: null
 description: "굳건한 대지의 힘을 다루는 파괴자. 압도적인 체력과 공격력으로 최전선을 지키는 수호자."
 portrait: /assets/characters/portrait/francis.png
 full: /assets/characters/full/francis.png

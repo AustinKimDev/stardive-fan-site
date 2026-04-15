@@ -1,0 +1,16 @@
+# 4성 — 이호 (남령)
+slug: iho
+name_ko: 이호
+name_en: Iho
+region: namryeong
+element: earth
+style: brawler
+rarity: 4seong
+role: "대지 브롤러"
+cv_kr: null
+cv_jp: null
+description: "남령 출신의 대지 속성 브롤러. 거대한 체격과 강인한 주먹으로 근거리 전투를 지배한다."
+portrait: /assets/characters/portrait/iho.png
+full: /assets/characters/full/iho.png
+source_url: https://guide.netmarble.com/monster2
+tierS: false

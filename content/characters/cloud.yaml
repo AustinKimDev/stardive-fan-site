@@ -1,14 +1,14 @@
-# verify: element/style 공식 확인 필요
+# 4성 — 클라우드 (엘렌도르)
 slug: cloud
 name_ko: 클라우드
 name_en: Cloud
 region: ellendor
 element: wind
 style: brawler
-rarity: SSR
+rarity: 4seong
 role: "바람 브롤러 전사"
-cv_kr: ""
-cv_jp: ""
+cv_kr: null
+cv_jp: null
 description: "질풍처럼 빠른 몸놀림을 자랑하는 바람 속성 전사. 적의 대열을 무너뜨리는 돌격 전문가."
 portrait: /assets/characters/portrait/cloud.png
 full: /assets/characters/full/cloud.png

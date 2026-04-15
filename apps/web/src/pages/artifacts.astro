@@ -1,0 +1,309 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RarityBadge from '../components/RarityBadge.astro';
+import { buildMeta } from '../lib/seo';
+
+const entries = await getCollection('artifacts');
+
+const rarityOrder: Record<string, number> = { '5seong': 0, '4seong': 1, '3seong': 2, 'unknown': 3 };
+
+const artifacts = entries
+  .map(e => e.data)
+  .sort((a, b) => {
+    const ro = (rarityOrder[a.rarity] ?? 9) - (rarityOrder[b.rarity] ?? 9);
+    if (ro !== 0) return ro;
+    return a.name_ko.localeCompare(b.name_ko, 'ko');
+  });
+
+// 가챠용 5성 (픽업 + 선택)
+const art5seong = artifacts.filter(a => a.rarity === '5seong');
+const art4seong = artifacts.filter(a => a.rarity === '4seong');
+const art3seong = artifacts.filter(a => a.rarity === '3seong');
+
+// 전용 캐릭터 이름 맵핑
+const charEntries = await getCollection('characters');
+const charMap = Object.fromEntries(charEntries.map(e => [e.data.slug, e.data.name_ko]));
+
+const meta = buildMeta({
+  path: '/artifacts',
+  title: '몬길 스타다이브 아티팩트 목록',
+  description: `몬스터길들이기 STAR DIVE 아티팩트 ${artifacts.length}종 — 5성/4성/3성 등급, 전용 캐릭터 정보.`,
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: '스타다이브 아티팩트 목록',
+    numberOfItems: artifacts.length,
+  },
+});
+
+const sidebarItems = [
+  { label: '아티팩트', href: '/artifacts' },
+  { label: '캐릭터', href: '/characters' },
+  { label: '쿠폰', href: '/coupons' },
+  { label: '티어', href: '/tier' },
+];
+---
+
+<style>
+  .page-header {
+    margin-bottom: 12px;
+  }
+  .page-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--fg-primary);
+    margin: 0 0 2px;
+  }
+  .page-sub {
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+    margin: 0;
+  }
+
+  .rarity-section {
+    margin-bottom: 20px;
+  }
+  .rarity-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    margin: 0 0 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* 아티팩트 테이블 */
+  .art-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    font-variant-numeric: tabular-nums;
+  }
+  .art-table thead tr {
+    background: var(--bg-raised);
+    border-bottom: 1px solid var(--border);
+  }
+  .art-table th {
+    padding: 5px 10px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    text-align: left;
+    white-space: nowrap;
+  }
+  .art-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 120ms;
+  }
+  .art-table tbody tr:last-child {
+    border-bottom: none;
+  }
+  .art-table tbody tr:hover {
+    background: var(--bg-raised);
+  }
+  .art-table td {
+    padding: 6px 10px;
+    color: var(--fg-primary);
+    vertical-align: middle;
+  }
+  .td-name {
+    font-weight: 600;
+  }
+  .td-exclusive {
+    font-size: 0.75rem;
+  }
+  .exclusive-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .exclusive-link:hover {
+    text-decoration: underline;
+  }
+  .td-source {
+    font-size: 0.75rem;
+  }
+  .source-link {
+    color: var(--fg-dim);
+    text-decoration: none;
+    transition: color 150ms;
+  }
+  .source-link:hover {
+    color: var(--accent);
+  }
+  .td-muted {
+    color: var(--fg-dim);
+    font-size: 0.75rem;
+  }
+
+  .source-note {
+    margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+  }
+</style>
+
+<BaseLayout
+  meta={meta}
+  sidebarTitle="도감"
+  sidebarItems={sidebarItems}
+  fullWidth={false}
+>
+  <div class="page-header">
+    <h1 class="page-title">아티팩트 목록</h1>
+    <p class="page-sub">총 {artifacts.length}종 · 5성 {art5seong.length} / 4성 {art4seong.length} / 3성 {art3seong.length}</p>
+  </div>
+
+  {art5seong.length > 0 && (
+    <section class="rarity-section" aria-label="5성 아티팩트">
+      <h2 class="rarity-heading">
+        <RarityBadge rarity="5seong" />
+        5성
+      </h2>
+      <table class="art-table">
+        <thead>
+          <tr>
+            <th style="width:60px">등급</th>
+            <th>아티팩트명</th>
+            <th>전용 캐릭터</th>
+            <th>출처</th>
+          </tr>
+        </thead>
+        <tbody>
+          {art5seong.map(a => (
+            <tr>
+              <td><RarityBadge rarity={a.rarity} /></td>
+              <td class="td-name">{a.name_ko}</td>
+              <td class="td-exclusive">
+                {a.exclusive_character_slug ? (
+                  <a class="exclusive-link" href={`/characters/${a.exclusive_character_slug}`}>
+                    {charMap[a.exclusive_character_slug] ?? a.exclusive_character_slug}
+                  </a>
+                ) : (
+                  <span class="td-muted">—</span>
+                )}
+              </td>
+              <td class="td-source">
+                {a.source_url ? (
+                  <a class="source-link" href={a.source_url} target="_blank" rel="noreferrer">
+                    확률안내 ↗
+                  </a>
+                ) : (
+                  <span class="td-muted">—</span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )}
+
+  {art4seong.length > 0 && (
+    <section class="rarity-section" aria-label="4성 아티팩트">
+      <h2 class="rarity-heading">
+        <RarityBadge rarity="4seong" />
+        4성
+      </h2>
+      <table class="art-table">
+        <thead>
+          <tr>
+            <th style="width:60px">등급</th>
+            <th>아티팩트명</th>
+            <th>전용 캐릭터</th>
+            <th>출처</th>
+          </tr>
+        </thead>
+        <tbody>
+          {art4seong.map(a => (
+            <tr>
+              <td><RarityBadge rarity={a.rarity} /></td>
+              <td class="td-name">{a.name_ko}</td>
+              <td class="td-exclusive">
+                {a.exclusive_character_slug ? (
+                  <a class="exclusive-link" href={`/characters/${a.exclusive_character_slug}`}>
+                    {charMap[a.exclusive_character_slug] ?? a.exclusive_character_slug}
+                  </a>
+                ) : (
+                  <span class="td-muted">—</span>
+                )}
+              </td>
+              <td class="td-source">
+                {a.source_url ? (
+                  <a class="source-link" href={a.source_url} target="_blank" rel="noreferrer">
+                    확률안내 ↗
+                  </a>
+                ) : (
+                  <span class="td-muted">—</span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )}
+
+  {art3seong.length > 0 && (
+    <section class="rarity-section" aria-label="3성 아티팩트">
+      <h2 class="rarity-heading">
+        <RarityBadge rarity="3seong" />
+        3성
+      </h2>
+      <table class="art-table">
+        <thead>
+          <tr>
+            <th style="width:60px">등급</th>
+            <th>아티팩트명</th>
+            <th>전용 캐릭터</th>
+            <th>출처</th>
+          </tr>
+        </thead>
+        <tbody>
+          {art3seong.map(a => (
+            <tr>
+              <td><RarityBadge rarity={a.rarity} /></td>
+              <td class="td-name">{a.name_ko}</td>
+              <td class="td-exclusive">
+                {a.exclusive_character_slug ? (
+                  <a class="exclusive-link" href={`/characters/${a.exclusive_character_slug}`}>
+                    {charMap[a.exclusive_character_slug] ?? a.exclusive_character_slug}
+                  </a>
+                ) : (
+                  <span class="td-muted">—</span>
+                )}
+              </td>
+              <td class="td-source">
+                {a.source_url ? (
+                  <a class="source-link" href={a.source_url} target="_blank" rel="noreferrer">
+                    확률안내 ↗
+                  </a>
+                ) : (
+                  <span class="td-muted">—</span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )}
+
+  <p class="source-note">
+    이미지 출처: 넷마블 「몬길: STAR DIVE」 공식 사이트 (guide.netmarble.com). © Netmarble. 비공식 팬 페이지.
+  </p>
+</BaseLayout>

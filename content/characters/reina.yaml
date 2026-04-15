@@ -1,0 +1,16 @@
+# 4성 — 레이나 (바레인)
+slug: reina
+name_ko: 레이나
+name_en: Reina
+region: barein
+element: ice
+style: assassin
+rarity: 4seong
+role: "얼음 암살자"
+cv_kr: null
+cv_jp: null
+description: "바레인 출신의 냉혹한 얼음 속성 암살자. 차가운 눈빛과 날카로운 기술로 표적을 제거한다."
+portrait: /assets/characters/portrait/reina.png
+full: /assets/characters/full/reina.png
+source_url: https://guide.netmarble.com/monster2
+tierS: false

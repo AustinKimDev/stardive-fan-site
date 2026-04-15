@@ -1,0 +1,16 @@
+# 5성 픽업 캐릭터 — 에스데 (바레인)
+slug: esde
+name_ko: 에스데
+name_en: Esde
+region: barein
+element: wind
+style: assassin
+rarity: 5seong
+role: "바람 암살 딜러"
+cv_kr: null
+cv_jp: null
+description: "바레인 출신의 바람 속성 암살자. 빠른 기동력과 날카로운 공격으로 전장을 누빈다. 출시 픽업 배너 5성."
+portrait: /assets/characters/portrait/esde.png
+full: /assets/characters/full/esde.png
+source_url: https://guide.netmarble.com/monster2
+tierS: true

@@ -5,12 +5,35 @@ import CharacterCard from '../components/CharacterCard.astro';
 import { buildMeta } from '../lib/seo';
 
 const entries = await getCollection('characters');
-const characters = entries.map(e => e.data).sort((a, b) => a.name_ko.localeCompare(b.name_ko, 'ko'));
+
+const rarityOrder: Record<string, number> = {
+  '5seong': 0,
+  'unknown': 1,
+  '4seong': 2,
+  '3seong': 3,
+};
+
+const characters = entries
+  .map(e => e.data)
+  .sort((a, b) => {
+    const ro = (rarityOrder[a.rarity] ?? 9) - (rarityOrder[b.rarity] ?? 9);
+    if (ro !== 0) return ro;
+    return a.name_ko.localeCompare(b.name_ko, 'ko');
+  });
+
+const regions = [
+  { key: 'all', label: '전체' },
+  { key: 'ellendor', label: '엘렌도르' },
+  { key: 'barein', label: '바레인' },
+  { key: 'serenia', label: '세레니아' },
+  { key: 'sura', label: '수라' },
+  { key: 'namryeong', label: '남령' },
+];
 
 const meta = buildMeta({
   path: '/characters',
   title: '몬길 스타다이브 캐릭터 도감',
-  description: `몬스터길들이기 STAR DIVE 출시 캐릭터 ${characters.length}인 — 속성, 스타일, CV 정보.`,
+  description: `몬스터길들이기 STAR DIVE 출시 캐릭터 ${characters.length}인 — 5성/4성/3성 등급, 지역, 속성, CV 정보.`,
   jsonLd: {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -23,6 +46,7 @@ const sidebarItems = [
   { label: '전체', href: '/characters' },
   { label: '쿠폰', href: '/coupons' },
   { label: '티어', href: '/tier' },
+  { label: '아티팩트', href: '/artifacts' },
 ];
 ---
 
@@ -42,12 +66,58 @@ const sidebarItems = [
     color: var(--fg-dim);
     margin: 0;
   }
+
+  /* 지역 필터 탭 */
+  .region-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .region-tabs::-webkit-scrollbar { display: none; }
+  .region-tab {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 2px 2px 0 0;
+    cursor: pointer;
+    color: var(--fg-dim);
+    background: transparent;
+    white-space: nowrap;
+    position: relative;
+    bottom: -1px;
+    transition: color 150ms, background 150ms;
+    letter-spacing: 0.02em;
+  }
+  .region-tab:hover {
+    color: var(--fg-muted);
+    background: var(--bg-raised);
+  }
+  .region-tab--active {
+    color: var(--accent);
+    border-color: var(--border);
+    background: var(--bg-surface);
+    border-bottom-color: var(--bg-surface);
+  }
+
+  /* 캐릭터 그리드 */
   .char-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     align-items: flex-start;
   }
+  .region-section {
+    display: contents;
+  }
+  .region-section[data-hidden="true"] {
+    display: none;
+  }
+
   .source-note {
     margin-top: 16px;
     padding-top: 8px;
@@ -57,6 +127,28 @@ const sidebarItems = [
   }
 </style>
 
+<script>
+  // 지역 필터 탭 동작 (클라이언트 사이드)
+  const tabs = document.querySelectorAll<HTMLButtonElement>('.region-tab');
+  const sections = document.querySelectorAll<HTMLElement>('.region-section');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const region = tab.dataset.region;
+      tabs.forEach(t => t.classList.remove('region-tab--active'));
+      tab.classList.add('region-tab--active');
+
+      sections.forEach(sec => {
+        if (region === 'all' || sec.dataset.region === region) {
+          sec.removeAttribute('data-hidden');
+        } else {
+          sec.setAttribute('data-hidden', 'true');
+        }
+      });
+    });
+  });
+</script>
+
 <BaseLayout
   meta={meta}
   sidebarTitle="캐릭터"
@@ -64,12 +156,31 @@ const sidebarItems = [
 >
   <div class="page-header">
     <h1 class="page-title">캐릭터 도감</h1>
-    <p class="page-sub">출시 {characters.length}인 · 엘렌도르 지역</p>
+    <p class="page-sub">출시 {characters.length}인 (이미지 확보 15인 · 이미지 미확보 5인)</p>
   </div>
 
+  <!-- 지역 필터 탭 -->
+  <nav class="region-tabs" role="tablist" aria-label="지역 필터">
+    {regions.map((r, i) => (
+      <button
+        class:list={['region-tab', i === 0 && 'region-tab--active']}
+        data-region={r.key}
+        role="tab"
+        aria-selected={i === 0}
+      >
+        {r.label}
+      </button>
+    ))}
+  </nav>
+
+  <!-- 캐릭터 그리드 -->
   <div class="char-grid" role="list" aria-label="캐릭터 목록">
     {characters.map(c => (
-      <div role="listitem">
+      <div
+        class="region-section"
+        data-region={c.region}
+        role="listitem"
+      >
         <CharacterCard
           slug={c.slug}
           name_ko={c.name_ko}
@@ -79,12 +190,13 @@ const sidebarItems = [
           rarity={c.rarity}
           role={c.role}
           portrait={c.portrait}
+          region={c.region}
         />
       </div>
     ))}
   </div>
 
   <p class="source-note">
-    캐릭터 일러스트 © Netmarble. 속성/스타일 정보는 출시 당일 기준이며 추후 공식 업데이트로 변경될 수 있습니다.
+    이미지 출처: 넷마블 「몬길: STAR DIVE」 공식 사이트 (stardive.netmarble.com, guide.netmarble.com). © Netmarble. 비공식 팬 페이지.
   </p>
 </BaseLayout>

@@ -1,0 +1,16 @@
+# 4성 — 데이지 (세레니아)
+slug: daisy
+name_ko: 데이지
+name_en: Daisy
+region: serenia
+element: wind
+style: support
+rarity: 4seong
+role: "바람 서포터"
+cv_kr: null
+cv_jp: null
+description: "세레니아 출신의 밝고 쾌활한 바람 속성 서포터. 꽃처럼 부드럽지만 전장에서는 강력한 지원을 펼친다."
+portrait: /assets/characters/portrait/daisy.png
+full: /assets/characters/full/daisy.png
+source_url: https://guide.netmarble.com/monster2
+tierS: false

@@ -1,0 +1,16 @@
+# 4성 — 연화 (남령)
+slug: yeonhwa
+name_ko: 연화
+name_en: Yeonhwa
+region: namryeong
+element: fire
+style: support
+rarity: 4seong
+role: "불꽃 서포터"
+cv_kr: null
+cv_jp: null
+description: "남령 출신의 우아한 불꽃 속성 서포터. 연꽃처럼 고고한 자태 속에 강인한 의지를 품고 있다."
+portrait: /assets/characters/portrait/yeonhwa.png
+full: /assets/characters/full/yeonhwa.png
+source_url: https://guide.netmarble.com/monster2
+tierS: false

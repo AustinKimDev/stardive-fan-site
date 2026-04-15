@@ -1,0 +1,16 @@
+# 5성 픽업 캐릭터 — 지원 (수라)
+slug: jiwon
+name_ko: 지원
+name_en: Jiwon
+region: sura
+element: wind
+style: support
+rarity: 5seong
+role: "바람 지원 서포터"
+cv_kr: null
+cv_jp: null
+description: "수라 출신의 바람 속성 서포터. 팀 전체의 기동력을 높이는 전략적 지원 캐릭터. 출시 픽업 배너 5성."
+portrait: /assets/characters/portrait/jiwon.png
+full: /assets/characters/full/jiwon.png
+source_url: https://guide.netmarble.com/monster2
+tierS: true

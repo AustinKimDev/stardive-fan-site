@@ -22,8 +22,6 @@ const couponSchema = z.object({
 
 const coupons = defineCollection({
   loader: file('../../content/coupons.yaml', {
-    // Astro file loader requires each item to have an `id` field.
-    // We inject `code` as `id` since coupons don't have a separate id.
     parser: (text) => {
       const data = parseYaml(text) as Array<Record<string, unknown>>;
       return data.map((item) => ({ id: String(item['code']), ...item }));
@@ -35,6 +33,9 @@ const coupons = defineCollection({
 const characterElement = z.enum(['fire', 'ice', 'earth', 'wind', 'thunder']);
 const characterRole = z.enum(['brawler', 'destroyer', 'assassin', 'support']);
 
+// 5성/4성/3성 rarity enum (성 = seong)
+const rarityEnum = z.enum(['5seong', '4seong', '3seong', 'unknown']);
+
 const tierEntry = z.object({
   name: z.string(),
   description: z.string().optional(),
@@ -42,7 +43,7 @@ const tierEntry = z.object({
     name: z.string(),
     element: characterElement,
     role: characterRole,
-    rarity: z.enum(['SSR', 'SR', 'R']).optional(),
+    rarity: rarityEnum.optional(),
     slug: z.string().optional(),
   })),
 });
@@ -64,16 +65,16 @@ const characterSchema = z.object({
   name_ko: z.string(),
   name_en: z.string(),
   region: z.enum(['ellendor', 'barein', 'serenia', 'sura', 'namryeong']),
-  element: characterElement,
-  style: characterRole,
-  rarity: z.enum(['SSR', 'SR', 'R']),
-  role: z.string(),
-  cv_kr: z.string().optional(),
-  cv_jp: z.string().optional(),
-  description: z.string(),
-  portrait: z.string(),
-  full: z.string(),
-  source_url: z.string().url().optional(),
+  element: characterElement.optional().nullable(),
+  style: characterRole.optional().nullable(),
+  rarity: rarityEnum,
+  role: z.string().optional().nullable(),
+  cv_kr: z.string().optional().nullable(),
+  cv_jp: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  portrait: z.string().nullable(),
+  full: z.string().nullable(),
+  source_url: z.string().url().optional().nullable(),
   tierS: z.boolean().optional(),
 });
 
@@ -82,4 +83,19 @@ const characters = defineCollection({
   schema: characterSchema,
 });
 
-export const collections = { coupons, tier, characters };
+// 아티팩트 컬렉션
+const artifactSchema = z.object({
+  slug: z.string(),
+  name_ko: z.string(),
+  rarity: rarityEnum,
+  exclusive_character_slug: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  source_url: z.string().url().optional().nullable(),
+});
+
+const artifacts = defineCollection({
+  loader: glob({ pattern: '**/*.yaml', base: '../../content/artifacts' }),
+  schema: artifactSchema,
+});
+
+export const collections = { coupons, tier, characters, artifacts };

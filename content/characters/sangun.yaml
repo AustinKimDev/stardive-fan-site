@@ -1,0 +1,16 @@
+# 5성 픽업 캐릭터 — 산군 (남령)
+slug: sangun
+name_ko: 산군
+name_en: Sangun
+region: namryeong
+element: fire
+style: destroyer
+rarity: 5seong
+role: "불꽃 파괴 지휘관"
+cv_kr: null
+cv_jp: null
+description: "남령 출신의 불 속성 파괴자. 강인한 의지와 파괴력으로 전선을 이끄는 지휘관형 딜러. 출시 픽업 배너 5성."
+portrait: /assets/characters/portrait/sangun.png
+full: /assets/characters/full/sangun.png
+source_url: https://guide.netmarble.com/monster2
+tierS: true
