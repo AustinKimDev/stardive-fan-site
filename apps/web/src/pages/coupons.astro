@@ -137,6 +137,7 @@ const sidebarItems = [
   meta={meta}
   fullWidth={true}
 >
+  <div class="coupons-inner">
   <div class="page-header">
     <h1 class="page-title">
       쿠폰 코드
@@ -202,4 +203,12 @@ const sidebarItems = [
       </tbody>
     </table>
   </div>
+  </div>
 </BaseLayout>
+
+<style is:inline>
+  .coupons-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+</style>

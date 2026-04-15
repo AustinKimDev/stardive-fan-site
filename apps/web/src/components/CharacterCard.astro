@@ -60,7 +60,7 @@ const regionLabel: Record<Region, string> = {
   }
   .char-portrait {
     width: 180px;
-    height: 220px;
+    aspect-ratio: 1/1;
     overflow: hidden;
     background: var(--bg-raised);
     position: relative;
@@ -69,7 +69,7 @@ const regionLabel: Record<Region, string> = {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: top center;
+    object-position: center 18%;
     display: block;
     transition: transform 200ms;
   }

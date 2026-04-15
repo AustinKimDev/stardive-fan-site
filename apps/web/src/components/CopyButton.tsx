@@ -53,18 +53,14 @@ export function CopyButton({ value, label = 'COPY', fullWidth = false }: CopyBut
         padding: '5px 12px',
         borderRadius: '0',
         background: copied
-          ? 'oklch(0.76 0.14 220 / 0.15)'
-          : 'oklch(0.76 0.14 220)',
-        color: copied
-          ? 'oklch(0.76 0.14 220)'
-          : 'oklch(0.10 0.018 260)',
+          ? 'oklch(0.76 0.14 220 / 0.18)'
+          : 'transparent',
+        color: 'oklch(0.76 0.14 220)',
         fontFamily: "'SUIT Variable', 'SUIT', sans-serif",
         fontWeight: 700,
         fontSize: '0.75rem',
         letterSpacing: '0.05em',
-        border: copied
-          ? '1px solid oklch(0.76 0.14 220 / 0.5)'
-          : '1px solid transparent',
+        border: '1px solid oklch(0.76 0.14 220 / 0.5)',
         cursor: 'pointer',
         transition: 'background 180ms, color 180ms, border-color 180ms',
         outlineOffset: '1px',
