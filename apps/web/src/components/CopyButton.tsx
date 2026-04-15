@@ -6,10 +6,9 @@ interface CopyButtonProps {
   fullWidth?: boolean;
 }
 
-export function CopyButton({ value, label = '복사', fullWidth = false }: CopyButtonProps) {
+export function CopyButton({ value, label = 'COPY', fullWidth = false }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
-  // prefers-reduced-motion 감지
   const prefersReduced = useRef<boolean>(false);
 
   useEffect(() => {
@@ -22,25 +21,18 @@ export function CopyButton({ value, label = '복사', fullWidth = false }: CopyB
     try {
       await navigator.clipboard.writeText(value);
     } catch {
-      // 클립보드 실패 시 폴백 — 무시
+      // fallback — ignore
     }
     setCopied(true);
 
     if (btnRef.current && !prefersReduced.current) {
       const el = btnRef.current;
-      // translateY(-4px) rise
       el.classList.add('copy-animate');
-      // ring pulse
       el.classList.add('copy-success');
       setTimeout(() => {
         el.classList.remove('copy-animate');
         el.classList.remove('copy-success');
-      }, 400);
-    }
-
-    // 햅틱
-    if (typeof navigator.vibrate === 'function') {
-      navigator.vibrate(8);
+      }, 350);
     }
 
     setTimeout(() => setCopied(false), 1800);
@@ -58,30 +50,31 @@ export function CopyButton({ value, label = '복사', fullWidth = false }: CopyB
         alignItems: 'center',
         justifyContent: 'center',
         width: fullWidth ? '100%' : undefined,
-        padding: '0.625rem 1rem',
+        padding: '5px 12px',
         borderRadius: '0',
         background: copied
-          ? 'oklch(0.86 0.085 335 / 0.25)'
-          : 'var(--accent)',
+          ? 'oklch(0.76 0.14 220 / 0.15)'
+          : 'oklch(0.76 0.14 220)',
         color: copied
-          ? 'var(--accent)'
-          : 'oklch(0.14 0.045 268)',
+          ? 'oklch(0.76 0.14 220)'
+          : 'oklch(0.10 0.018 260)',
         fontFamily: "'SUIT Variable', 'SUIT', sans-serif",
         fontWeight: 700,
-        fontSize: '0.875rem',
-        letterSpacing: '0.03em',
+        fontSize: '0.75rem',
+        letterSpacing: '0.05em',
         border: copied
-          ? '1px solid oklch(0.87 0.055 290 / 0.6)'
+          ? '1px solid oklch(0.76 0.14 220 / 0.5)'
           : '1px solid transparent',
         cursor: 'pointer',
-        transition: 'background 200ms, color 200ms, border-color 200ms',
-        outlineOffset: '2px',
+        transition: 'background 180ms, color 180ms, border-color 180ms',
+        outlineOffset: '1px',
         outline: '2px solid transparent',
         userSelect: 'none',
         WebkitTapHighlightColor: 'transparent',
+        textTransform: 'uppercase' as const,
       }}
     >
-      {copied ? '복사됨 ✓' : label}
+      {copied ? '✓ 복사됨' : label}
     </button>
   );
 }

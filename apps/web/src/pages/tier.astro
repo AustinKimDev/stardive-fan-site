@@ -2,7 +2,6 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TierStrip from '../components/TierStrip.astro';
-import Rule from '../components/Rule.astro';
 import { buildMeta } from '../lib/seo';
 import { formatDateIso } from '../lib/format';
 
@@ -27,72 +26,190 @@ const meta = buildMeta({
     author: { '@type': 'Organization', name: 'stardive-fan-site' },
   },
 });
+
+const sidebarItems = [
+  { label: '리세마라', href: '/tier', badge: 'v' + d.version },
+  { label: '쿠폰', href: '/coupons' },
+  { label: '캐릭터', href: '/characters' },
+];
+
+// 티어 컨텍스트 탭 (스텁 — PvE만 활성)
+const contextTabs = [
+  { label: 'PvE', value: 'pve', active: true },
+  { label: '스토리', value: 'story', active: false },
+  { label: '보스', value: 'boss', active: false },
+];
 ---
 
 <style>
-  .tier-hero {
-    padding: 3rem 0 1.5rem;
+  .tier-page-header {
     display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
   }
-  .tier-version-badge {
-    font-family: 'Departure Mono', 'Courier New', monospace;
-    font-size: 0.8125rem;
-    color: var(--fg-dim);
-    letter-spacing: 0.05em;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 0.1rem 0.4rem;
-    display: inline-block;
-  }
-  .tier-h1 {
-    font-family: 'SUIT Variable', 'SUIT', sans-serif;
-    font-size: clamp(2.25rem, 4.5vw + 1rem, 4.25rem);
-    font-weight: 900;
+  .tier-title-block {}
+  .tier-title {
+    font-size: 1.25rem;
+    font-weight: 800;
     letter-spacing: -0.02em;
     color: var(--fg-primary);
-    margin: 0;
-    line-height: 1.05;
+    margin: 0 0 4px;
+    line-height: 1.2;
   }
-  .tier-meta {
-    font-family: 'Departure Mono', 'Courier New', monospace;
+  .tier-summary {
     font-size: 0.75rem;
     color: var(--fg-dim);
     margin: 0;
+    max-width: 60ch;
+    line-height: 1.4;
   }
-  .tier-summary {
-    font-size: 1rem;
-    color: var(--fg-muted);
-    max-inline-size: 68ch;
-    line-height: 1.65;
-    margin: 0;
+  .tier-version {
+    font-family: 'Departure Mono', monospace;
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
+  /* 컨텍스트 탭 */
+  .context-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+  }
+  .context-tab {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 2px 2px 0 0;
+    cursor: pointer;
+    color: var(--fg-dim);
+    background: transparent;
+    transition: color 150ms, background 150ms;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    position: relative;
+    bottom: -1px;
+  }
+  .context-tab--active {
+    color: var(--accent);
+    border-color: var(--border);
+    background: var(--bg-surface);
+    border-bottom-color: var(--bg-surface);
+  }
+  .context-tab--stub {
+    color: var(--fg-dim);
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  /* 티어 목록 */
   .tier-list {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 2rem;
+    gap: 6px;
+    margin-bottom: 16px;
   }
 
+  /* 서사 본문 */
   .tier-narrative {
-    max-inline-size: 68ch;
-    line-height: 1.65;
+    max-width: 68ch;
+    font-size: 0.8125rem;
+    line-height: 1.55;
     color: var(--fg-muted);
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+  .tier-narrative :global(h2) {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--fg-primary);
+    margin: 12px 0 6px;
+  }
+  .tier-narrative :global(p) {
+    margin: 0 0 8px;
+  }
+  .tier-narrative :global(blockquote) {
+    border-left: 2px solid var(--border);
+    padding-left: 10px;
+    color: var(--fg-dim);
+    margin: 8px 0;
+    font-style: italic;
+  }
+  .tier-narrative :global(ul) {
+    padding-left: 16px;
+    margin: 6px 0;
+  }
+  .tier-narrative :global(li) {
+    margin-bottom: 2px;
+  }
+  .tier-narrative :global(strong) {
+    color: var(--fg-primary);
+    font-weight: 700;
+  }
+  .tier-narrative :global(a) {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .tier-narrative :global(a:hover) {
+    text-decoration: underline;
+  }
+
+  .tier-footer-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Departure Mono', monospace;
+    font-size: 0.625rem;
+    color: var(--fg-dim);
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    margin-top: 8px;
   }
 </style>
 
-<BaseLayout meta={meta} dataSection="tier">
-  <div class="tier-hero">
-    <span class="tier-version-badge">v{d.version} · {formatDateIso(d.publishedAt)} · {d.context}</span>
-    <h1 class="tier-h1">{d.title}</h1>
-    <p class="tier-summary">{d.summary}</p>
+<BaseLayout
+  meta={meta}
+  dataSection="tier"
+  sidebarTitle="티어"
+  sidebarItems={sidebarItems}
+>
+  <div class="tier-page-header">
+    <div class="tier-title-block">
+      <h1 class="tier-title">{d.title}</h1>
+      <p class="tier-summary">{d.summary}</p>
+    </div>
+    <span class="tier-version">v{d.version} · {formatDateIso(d.publishedAt)}</span>
   </div>
 
-  <Rule />
+  <!-- 컨텍스트 탭 -->
+  <div class="context-tabs" role="tablist">
+    {contextTabs.map(tab => (
+      <span
+        role="tab"
+        class:list={[
+          'context-tab',
+          tab.active && 'context-tab--active',
+          !tab.active && 'context-tab--stub',
+        ]}
+        aria-selected={tab.active}
+      >
+        {tab.label}
+        {!tab.active && <span style="font-size:0.55rem;margin-left:3px">(곧)</span>}
+      </span>
+    ))}
+  </div>
 
-  <!-- 구조화된 티어 스트립 -->
+  <!-- 티어 스트립 목록 -->
   {d.tiers && d.tiers.length > 0 ? (
     <section aria-label="티어 목록">
       <div class="tier-list">
@@ -103,10 +220,17 @@ const meta = buildMeta({
     </section>
   ) : null}
 
-  <Rule />
-
-  <!-- 서사 본문 -->
-  <article class="tier-narrative prose prose-invert">
+  <!-- 서사 -->
+  <article class="tier-narrative">
     <Content />
   </article>
+
+  <!-- 푸터 메타 -->
+  <div class="tier-footer-meta">
+    <span>VERSION {d.version}</span>
+    <span>·</span>
+    <span>UPDATED {formatDateIso(d.publishedAt)}</span>
+    <span>·</span>
+    <span>{d.context.toUpperCase()}</span>
+  </div>
 </BaseLayout>

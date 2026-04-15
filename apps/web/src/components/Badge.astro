@@ -4,25 +4,25 @@ interface Props { variant: Variant }
 const { variant } = Astro.props;
 
 const styles: Record<Variant, string> = {
-  /* active — 피치 핑크 (브랜드 일관성, 스펙 §4) */
+  /* active — ice cyan */
   active:
-    'background:oklch(0.86 0.085 335 / 0.15);color:var(--accent);border:1px solid oklch(0.86 0.085 335 / 0.5)',
-  /* expired — 채움 없음, dim 테두리만 */
+    'background:oklch(0.76 0.14 220 / 0.12);color:var(--accent);border:1px solid oklch(0.76 0.14 220 / 0.4)',
+  /* expired — hot orange */
   expired:
-    'background:transparent;color:var(--fg-dim);border:1px solid var(--border)',
-  /* unknown — 페리윙클 테두리, 점선 */
+    'background:oklch(0.72 0.18 40 / 0.1);color:var(--accent-hot);border:1px solid oklch(0.72 0.18 40 / 0.3)',
+  /* unknown — dim dashed */
   unknown:
-    'background:transparent;color:var(--accent-alt);border:1px dashed oklch(0.87 0.055 290 / 0.6)',
+    'background:transparent;color:var(--fg-dim);border:1px dashed var(--border)',
   limited:
-    'background:oklch(0.87 0.055 290 / 0.12);color:var(--accent-alt);border:1px solid oklch(0.87 0.055 290 / 0.4)',
+    'background:oklch(0.82 0.13 85 / 0.1);color:var(--accent-gold);border:1px solid oklch(0.82 0.13 85 / 0.35)',
   permanent:
-    'background:oklch(0.87 0.055 290 / 0.08);color:var(--accent-alt);border:1px solid oklch(0.87 0.055 290 / 0.3)',
+    'background:oklch(0.76 0.14 220 / 0.08);color:var(--accent);border:1px solid oklch(0.76 0.14 220 / 0.25)',
   urgent:
-    'background:oklch(0.68 0.18 25 / 0.12);color:var(--danger);border:1px solid oklch(0.68 0.18 25 / 0.4)',
+    'background:oklch(0.72 0.18 40 / 0.12);color:var(--accent-hot);border:1px solid oklch(0.72 0.18 40 / 0.4)',
   scheduled:
-    'background:oklch(0.87 0.055 290 / 0.08);color:var(--accent-alt);border:1px solid oklch(0.87 0.055 290 / 0.3)',
+    'background:transparent;color:var(--fg-dim);border:1px solid var(--border)',
 };
 ---
-<span style={`display:inline-flex;align-items:center;gap:0.25rem;padding:0.1rem 0.4rem;border-radius:2px;font-size:0.6875rem;font-weight:500;letter-spacing:0.03em;line-height:1em;${styles[variant]}`}>
+<span style={`display:inline-flex;align-items:center;gap:0.25rem;padding:1px 5px;border-radius:2px;font-size:0.625rem;font-weight:700;letter-spacing:0.04em;line-height:1.2;${styles[variant]}`}>
   <slot />
 </span>

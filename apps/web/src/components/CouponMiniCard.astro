@@ -1,0 +1,126 @@
+---
+import { CopyButton } from './CopyButton.tsx';
+
+interface Reward { kind: string; name: string; qty: number }
+
+interface Props {
+  code: string;
+  status: 'active' | 'expired' | 'unknown';
+  rewards: Reward[];
+  redemptionUrl: string;
+}
+
+const { code, status, rewards, redemptionUrl } = Astro.props;
+const isExpired = status === 'expired';
+---
+
+<style>
+  .mini-card {
+    flex-shrink: 0;
+    width: 220px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: border-color 150ms;
+  }
+  .mini-card:hover {
+    border-color: var(--border-strong);
+  }
+  .mini-card--expired {
+    opacity: 0.55;
+  }
+  .mini-card-header {
+    padding: 6px 8px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .mini-status {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+  .mini-status--active {
+    color: var(--accent);
+    background: oklch(0.76 0.14 220 / 0.12);
+    border: 1px solid oklch(0.76 0.14 220 / 0.35);
+  }
+  .mini-status--expired {
+    color: var(--accent-hot);
+    background: oklch(0.72 0.18 40 / 0.1);
+    border: 1px solid oklch(0.72 0.18 40 / 0.3);
+  }
+  .mini-status--unknown {
+    color: var(--fg-dim);
+    background: transparent;
+    border: 1px dashed var(--border);
+  }
+  .mini-body {
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+  .mini-code {
+    font-family: 'Departure Mono', 'Courier New', monospace;
+    font-size: 1.125rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--fg-primary);
+    line-height: 1.2;
+    word-break: break-all;
+  }
+  .mini-rewards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .mini-rewards li {
+    font-size: 0.6875rem;
+    color: var(--fg-muted);
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .mini-footer {
+    padding: 0 0 0;
+    border-top: 1px solid var(--border);
+  }
+</style>
+
+<article class:list={['mini-card', isExpired && 'mini-card--expired']}>
+  <div class="mini-card-header">
+    <span class:list={['mini-status', `mini-status--${status}`]}>
+      {status === 'active' ? '사용 가능' : status === 'expired' ? '만료' : '검증중'}
+    </span>
+    <a
+      href={redemptionUrl}
+      target="_blank"
+      rel="noreferrer"
+      style="font-size:0.625rem;color:var(--fg-dim);text-decoration:none;"
+    >↗ 입력</a>
+  </div>
+  <div class="mini-body">
+    <code class="mini-code">{code}</code>
+    <ul class="mini-rewards">
+      {rewards.slice(0, 2).map(r => (
+        <li>{r.name} ×{r.qty.toLocaleString('ko-KR')}</li>
+      ))}
+      {rewards.length > 2 && <li style="color:var(--fg-dim)">+{rewards.length - 2}개 더...</li>}
+    </ul>
+  </div>
+  <div class="mini-footer">
+    <CopyButton client:load value={code} />
+  </div>
+</article>

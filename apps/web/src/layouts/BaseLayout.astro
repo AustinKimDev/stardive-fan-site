@@ -1,14 +1,26 @@
 ---
 import '../styles/global.css';
-import Nav from '../components/Nav.astro';
+import TopBar from '../components/TopBar.astro';
+import Sidebar from '../components/Sidebar.astro';
 import type { PageMeta } from '../lib/seo';
+
+interface SidebarItem {
+  label: string;
+  href: string;
+  badge?: string;
+}
 
 interface Props {
   meta: PageMeta;
   dataSection?: string;
+  sidebarTitle?: string;
+  sidebarItems?: SidebarItem[];
+  fullWidth?: boolean;
 }
-const { meta, dataSection } = Astro.props;
+const { meta, dataSection, sidebarTitle, sidebarItems, fullWidth = false } = Astro.props;
+const hasSidebar = sidebarItems && sidebarItems.length > 0;
 ---
+
 <!doctype html>
 <html lang="ko">
   <head>
@@ -27,10 +39,84 @@ const { meta, dataSection } = Astro.props;
     {meta.jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(meta.jsonLd)} />}
   </head>
   <body data-section={dataSection}>
-    <Nav />
-    <main style="max-width:80rem;margin:0 auto;padding:2rem 1rem"><slot /></main>
-    <footer style="max-width:80rem;margin:0 auto;padding:3rem 1rem;font-size:0.75rem;color:var(--fg-dim);border-top:1px solid var(--border);margin-top:4rem">
-      © 2026 stardive-fan-site — 비공식 팬사이트. 「몬길: STAR DIVE」 © Netmarble.
+    <TopBar />
+
+    <div class:list={['page-wrapper', fullWidth && 'page-wrapper--full']}>
+      {hasSidebar ? (
+        <div class="wiki-layout">
+          <Sidebar title={sidebarTitle} items={sidebarItems} />
+          <main class="wiki-content">
+            <slot />
+          </main>
+        </div>
+      ) : (
+        <main class="page-main">
+          <slot />
+        </main>
+      )}
+    </div>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <span>© 2026 stardive-fan-site — 비공식 팬사이트.</span>
+        <span>「몬길: STAR DIVE」 © Netmarble.</span>
+        <img src="/assets/brand/guide-badge.png" alt="확률안내" height="20" style="vertical-align:middle;opacity:0.6" />
+      </div>
     </footer>
   </body>
 </html>
+
+<style>
+  .page-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 12px;
+  }
+  .page-wrapper--full {
+    max-width: 100%;
+  }
+  .wiki-layout {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    align-items: flex-start;
+  }
+  .wiki-content {
+    flex: 1;
+    min-width: 0;
+    max-width: 880px;
+  }
+  .page-main {
+    padding: 12px 0;
+    max-width: 880px;
+  }
+  .page-wrapper--full .page-main {
+    max-width: none;
+  }
+  .site-footer {
+    border-top: 1px solid var(--border);
+    margin-top: 24px;
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+  }
+  /* 모바일: 사이드바가 상단 탭 스트립 */
+  @media (max-width: 1023px) {
+    .wiki-layout {
+      flex-direction: column;
+      gap: 8px;
+    }
+    .wiki-content {
+      max-width: 100%;
+      width: 100%;
+    }
+  }
+</style>

@@ -43,6 +43,7 @@ const tierEntry = z.object({
     element: characterElement,
     role: characterRole,
     rarity: z.enum(['SSR', 'SR', 'R']).optional(),
+    slug: z.string().optional(),
   })),
 });
 
@@ -58,4 +59,27 @@ const tier = defineCollection({
   }),
 });
 
-export const collections = { coupons, tier };
+const characterSchema = z.object({
+  slug: z.string(),
+  name_ko: z.string(),
+  name_en: z.string(),
+  region: z.enum(['ellendor', 'barein', 'serenia', 'sura', 'namryeong']),
+  element: characterElement,
+  style: characterRole,
+  rarity: z.enum(['SSR', 'SR', 'R']),
+  role: z.string(),
+  cv_kr: z.string().optional(),
+  cv_jp: z.string().optional(),
+  description: z.string(),
+  portrait: z.string(),
+  full: z.string(),
+  source_url: z.string().url().optional(),
+  tierS: z.boolean().optional(),
+});
+
+const characters = defineCollection({
+  loader: glob({ pattern: '**/*.yaml', base: '../../content/characters' }),
+  schema: characterSchema,
+});
+
+export const collections = { coupons, tier, characters };

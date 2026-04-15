@@ -1,0 +1,170 @@
+---
+const pathname = Astro.url.pathname;
+
+const navLinks = [
+  { label: '캐릭터', href: '/characters', soon: false },
+  { label: '티어', href: '/tier', soon: false },
+  { label: '쿠폰', href: '/coupons', soon: false },
+  { label: '패치노트', href: '/patches', soon: true },
+  { label: '세계관', href: '/lore', soon: true },
+];
+---
+
+<style>
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: 48px;
+    background: oklch(0.11 0.018 260 / 0.96);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+  }
+  .topbar-inner {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .topbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    flex-shrink: 0;
+    margin-right: 8px;
+  }
+  .topbar-logo img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+  .topbar-logo-text {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--fg-primary);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+  .topbar-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+  .topbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+  }
+  .topbar-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 8px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--fg-muted);
+    text-decoration: none;
+    position: relative;
+    transition: color 150ms;
+    white-space: nowrap;
+  }
+  .topbar-link::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 8px;
+    right: 8px;
+    height: 2px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 150ms;
+  }
+  .topbar-link[aria-current="page"] {
+    color: var(--accent);
+  }
+  .topbar-link[aria-current="page"]::after {
+    opacity: 1;
+  }
+  .topbar-link:hover {
+    color: var(--fg-primary);
+  }
+  .topbar-link--soon {
+    color: var(--fg-dim);
+    font-size: 0.75rem;
+  }
+  .topbar-link--soon:hover {
+    color: var(--fg-muted);
+  }
+  .soon-badge {
+    font-size: 0.625rem;
+    color: var(--fg-dim);
+    letter-spacing: 0.02em;
+  }
+  .topbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .topbar-official {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--fg-dim);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 2px;
+    transition: border-color 150ms, color 150ms;
+    white-space: nowrap;
+  }
+  .topbar-official:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  /* 모바일 */
+  @media (max-width: 640px) {
+    .topbar-logo-text { display: none; }
+    .topbar-link { padding: 4px 6px; font-size: 0.75rem; }
+  }
+</style>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="/" class="topbar-logo">
+      <img src="/assets/brand/logo.png" alt="STAR DIVE" width="28" height="28" />
+      <span class="topbar-logo-text">스타다이브</span>
+    </a>
+    <div class="topbar-divider" aria-hidden="true"></div>
+    <nav aria-label="주 메뉴">
+      <ul class="topbar-nav">
+        {navLinks.map(link => (
+          <li>
+            <a
+              href={link.href}
+              class:list={['topbar-link', link.soon && 'topbar-link--soon']}
+              aria-current={!link.soon && (pathname === link.href || pathname.startsWith(link.href + '/')) ? 'page' : undefined}
+            >
+              {link.label}
+              {link.soon && <span class="soon-badge">(곧)</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <div class="topbar-right">
+      <a href="https://stardive.netmarble.com/ko" target="_blank" rel="noreferrer" class="topbar-official">
+        게임 시작 ↗
+      </a>
+    </div>
+  </div>
+</header>

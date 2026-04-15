@@ -1,0 +1,16 @@
+# verify: element/style 공식 확인 필요
+slug: mina
+name_ko: 미나
+name_en: Mina
+region: ellendor
+element: thunder
+style: support
+rarity: SSR
+role: "구미호 지원 서포터"
+cv_kr: "윤은서"
+cv_jp: "鬼頭明里"
+description: "운명의 신을 모시는 신녀의 혈통을 이어받은 구미호. 아홉 개의 꼬리에 담긴 신비한 힘으로 동료를 지원한다."
+portrait: /assets/characters/portrait/mina.png
+full: /assets/characters/full/mina.png
+source_url: https://stardive.netmarble.com/ko
+tierS: true

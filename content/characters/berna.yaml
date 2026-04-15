@@ -1,0 +1,16 @@
+# verify: element/style 공식 확인 필요
+slug: berna
+name_ko: 베르나
+name_en: Berna
+region: ellendor
+element: fire
+style: support
+rarity: SSR
+role: "불꽃 서포트 힐러"
+cv_kr: ""
+cv_jp: ""
+description: "열정적인 불꽃을 다루는 서포터. 팀의 생존을 책임지는 든든한 치유사로, 격렬한 전투 속에서도 냉정함을 유지한다."
+portrait: /assets/characters/portrait/berna.png
+full: /assets/characters/full/berna.png
+source_url: https://stardive.netmarble.com/ko
+tierS: false

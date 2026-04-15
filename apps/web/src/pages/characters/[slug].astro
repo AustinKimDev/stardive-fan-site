@@ -1,0 +1,258 @@
+---
+export const prerender = true;
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RarityBadge from '../../components/RarityBadge.astro';
+import { buildMeta } from '../../lib/seo';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('characters');
+  return entries.map(e => ({
+    params: { slug: e.data.slug },
+    props: { character: e.data },
+  }));
+}
+
+const { character: c } = Astro.props;
+
+const elementLabel: Record<string, string> = {
+  fire: '불', ice: '얼음', earth: '땅', wind: '바람', thunder: '번개',
+};
+const styleLabel: Record<string, string> = {
+  brawler: '브롤러', destroyer: '파괴자', assassin: '암살자', support: '서포터',
+};
+const regionLabel: Record<string, string> = {
+  ellendor: '엘렌도르', barein: '바레인', serenia: '세레니아', sura: '수라', namryeong: '남령',
+};
+const elementColor: Record<string, string> = {
+  fire: 'var(--el-fire)', ice: 'var(--el-ice)', earth: 'var(--el-earth)',
+  wind: 'var(--el-wind)', thunder: 'var(--el-thunder)',
+};
+
+const meta = buildMeta({
+  path: `/characters/${c.slug}`,
+  title: `${c.name_ko} (${c.name_en}) — 몬길 스타다이브`,
+  description: c.description,
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: c.name_ko,
+    alternateName: c.name_en,
+    description: c.description,
+    image: `https://stardive-fan-site.vercel.app${c.portrait}`,
+  },
+});
+
+const allEntries = await getCollection('characters');
+const sidebarItems = allEntries.map(e => ({
+  label: e.data.name_ko,
+  href: `/characters/${e.data.slug}`,
+}));
+---
+
+<style>
+  .char-layout {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .char-portrait-col {}
+  .char-portrait-img {
+    width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+    object-position: top center;
+    display: block;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--bg-surface);
+  }
+  .char-portrait-placeholder {
+    width: 100%;
+    height: 400px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+    font-family: 'Departure Mono', monospace;
+  }
+  .char-info-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .char-name-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .char-name-ko {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--fg-primary);
+    margin: 0;
+    line-height: 1.1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .char-name-en {
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+    font-style: italic;
+    margin: 0;
+    letter-spacing: 0.01em;
+  }
+  .info-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .info-table tr {
+    border-bottom: 1px solid var(--border);
+  }
+  .info-table tr:last-child {
+    border-bottom: none;
+  }
+  .info-table th {
+    padding: 6px 10px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    background: var(--bg-raised);
+    white-space: nowrap;
+    width: 80px;
+    text-align: left;
+    border-right: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .info-table td {
+    padding: 6px 10px;
+    color: var(--fg-primary);
+    background: var(--bg-surface);
+    vertical-align: top;
+  }
+  .el-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+  .char-description {
+    font-size: 0.8125rem;
+    color: var(--fg-muted);
+    line-height: 1.55;
+    margin: 0;
+    padding: 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+  }
+  .source-note {
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+  }
+  .source-link {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .source-link:hover { text-decoration: underline; }
+
+  @media (max-width: 700px) {
+    .char-layout {
+      grid-template-columns: 1fr;
+    }
+    .char-portrait-img {
+      max-height: 300px;
+    }
+  }
+</style>
+
+<BaseLayout
+  meta={meta}
+  sidebarTitle="캐릭터"
+  sidebarItems={[
+    { label: '← 도감으로', href: '/characters' },
+    ...sidebarItems,
+  ]}
+>
+  <div class="char-layout">
+    <!-- 왼쪽: 풀 일러스트 -->
+    <div class="char-portrait-col">
+      <img
+        class="char-portrait-img"
+        src={c.full}
+        alt={`${c.name_ko} 풀 일러스트`}
+        loading="eager"
+      />
+    </div>
+
+    <!-- 오른쪽: 정보 -->
+    <div class="char-info-col">
+      <div class="char-name-block">
+        <h1 class="char-name-ko">
+          {c.name_ko}
+          <RarityBadge rarity={c.rarity} />
+        </h1>
+        <p class="char-name-en">{c.name_en}</p>
+      </div>
+
+      <table class="info-table">
+        <tbody>
+          <tr>
+            <th>지역</th>
+            <td>{regionLabel[c.region] ?? c.region}</td>
+          </tr>
+          <tr>
+            <th>속성</th>
+            <td>
+              <span class="el-dot" style={`background:${elementColor[c.element]}`} aria-hidden="true"></span>
+              {elementLabel[c.element] ?? c.element}
+            </td>
+          </tr>
+          <tr>
+            <th>스타일</th>
+            <td>{styleLabel[c.style] ?? c.style}</td>
+          </tr>
+          <tr>
+            <th>역할</th>
+            <td>{c.role}</td>
+          </tr>
+          {(c.cv_kr || c.cv_jp) && (
+            <tr>
+              <th>CV</th>
+              <td>
+                {c.cv_kr && <span>🇰🇷 {c.cv_kr}</span>}
+                {c.cv_kr && c.cv_jp && <span style="margin:0 6px;color:var(--fg-dim)">·</span>}
+                {c.cv_jp && <span>🇯🇵 {c.cv_jp}</span>}
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+
+      <p class="char-description">{c.description}</p>
+
+      {c.source_url && (
+        <p class="source-note">
+          출처: <a href={c.source_url} target="_blank" rel="noreferrer" class="source-link">
+            공식 사이트 ↗
+          </a> · © Netmarble
+        </p>
+      )}
+    </div>
+  </div>
+</BaseLayout>

@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CouponCard from '../components/CouponCard.astro';
+import CouponRow from '../components/CouponRow.astro';
 import { buildMeta } from '../lib/seo';
 
 const all = await getCollection('coupons');
@@ -32,29 +32,174 @@ const meta = buildMeta({
     })),
   },
 });
+
+const sidebarItems = [
+  { label: '전체 쿠폰', href: '/coupons' },
+  { label: '티어표', href: '/tier' },
+  { label: '캐릭터', href: '/characters' },
+];
 ---
-<BaseLayout meta={meta}>
-  <h1 style="font-size:clamp(2.25rem, 4.5vw + 1rem, 4.25rem);font-weight:800;letter-spacing:-0.02em;color:var(--fg-primary)">쿠폰 코드</h1>
-  <p style="margin-top:0.5rem;color:var(--fg-muted);font-size:1rem">
-    총 <strong style="color:var(--accent)">{active.length}개</strong> 사용 가능.
-    <a style="color:var(--accent-alt);text-decoration:underline;text-underline-offset:0.25rem"
-       href="https://coupon.netmarble.com/monster2" target="_blank" rel="noreferrer">
-      넷마블 쿠폰 입력 사이트
-    </a>에서 코드 입력.
-  </p>
 
-  <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0" />
+<style>
+  .page-header {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .page-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--fg-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .active-count {
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: 'Departure Mono', monospace;
+    color: var(--accent);
+    background: oklch(0.76 0.14 220 / 0.1);
+    border: 1px solid oklch(0.76 0.14 220 / 0.3);
+    padding: 1px 7px;
+    border-radius: 2px;
+  }
+  .redemption-link {
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 2px;
+    transition: border-color 150ms, color 150ms;
+    white-space: nowrap;
+  }
+  .redemption-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
 
-  <section style="display:grid;gap:0.75rem;grid-template-columns:repeat(auto-fill,minmax(340px,1fr))" aria-label="사용 가능 쿠폰">
-    {active.map(c => <CouponCard {...c} />)}
-  </section>
+  /* 테이블 */
+  .coupon-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--bg-surface);
+  }
+  .coupon-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    min-width: 700px;
+  }
+  .coupon-table thead th {
+    padding: 6px 10px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    border-bottom: 1px solid var(--border-strong);
+    background: var(--bg-raised);
+    white-space: nowrap;
+    position: sticky;
+    top: 48px;
+    z-index: 2;
+  }
+  .coupon-table thead th:first-child { border-radius: 0; }
+  .th-status   { width: 90px; min-width: 90px; }
+  .th-code     { width: 180px; min-width: 140px; }
+  .th-platform { width: 80px; min-width: 80px; }
+  .th-verified { width: 68px; min-width: 68px; white-space: nowrap; }
+  .th-copy     { width: 80px; min-width: 80px; }
+  .section-divider {
+    padding: 0;
+    background: var(--bg-base);
+  }
+  .section-divider td {
+    padding: 4px 10px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    border-bottom: 1px solid var(--border);
+  }
+</style>
 
-  {inactive.length > 0 && (
-    <details style="margin-top:2.5rem;border-top:1px solid var(--border);padding-top:1.5rem">
-      <summary style="cursor:pointer;color:var(--fg-muted);font-size:0.875rem">만료/검증중 쿠폰 ({inactive.length})</summary>
-      <div style="margin-top:1rem;display:grid;gap:0.75rem;grid-template-columns:repeat(auto-fill,minmax(340px,1fr))">
-        {inactive.map(c => <CouponCard {...c} />)}
-      </div>
-    </details>
-  )}
+<BaseLayout
+  meta={meta}
+  fullWidth={true}
+>
+  <div class="page-header">
+    <h1 class="page-title">
+      쿠폰 코드
+      <span class="active-count">{active.length}개 사용 가능</span>
+    </h1>
+    <a
+      href="https://coupon.netmarble.com/monster2"
+      target="_blank"
+      rel="noreferrer"
+      class="redemption-link"
+    >넷마블 쿠폰 입력 ↗</a>
+  </div>
+
+  <div class="coupon-table-wrap">
+    <table class="coupon-table" aria-label="쿠폰 코드 목록">
+      <thead>
+        <tr>
+          <th class="th-status">상태</th>
+          <th class="th-code">코드</th>
+          <th>보상</th>
+          <th class="th-platform">플랫폼</th>
+          <th class="th-verified">검증일</th>
+          <th class="th-copy">복사</th>
+        </tr>
+      </thead>
+      <tbody>
+        {active.length > 0 && (
+          <>
+            <tr class="section-divider">
+              <td colspan="6">사용 가능</td>
+            </tr>
+            {active.map(c => (
+              <CouponRow
+                code={c.code}
+                status={c.status}
+                rewards={c.rewards}
+                redemptionUrl={c.redemptionUrl}
+                platformNotes={c.platformNotes}
+                source={c.source}
+                lastVerifiedAt={c.lastVerifiedAt}
+              />
+            ))}
+          </>
+        )}
+        {inactive.length > 0 && (
+          <>
+            <tr class="section-divider">
+              <td colspan="6">만료 / 검증중</td>
+            </tr>
+            {inactive.map(c => (
+              <CouponRow
+                code={c.code}
+                status={c.status}
+                rewards={c.rewards}
+                redemptionUrl={c.redemptionUrl}
+                platformNotes={c.platformNotes}
+                source={c.source}
+                lastVerifiedAt={c.lastVerifiedAt}
+              />
+            ))}
+          </>
+        )}
+      </tbody>
+    </table>
+  </div>
 </BaseLayout>

@@ -1,0 +1,38 @@
+---
+type Element = 'fire' | 'ice' | 'earth' | 'wind' | 'thunder';
+
+interface Props {
+  element: Element;
+  size?: number;
+}
+
+const { element, size = 16 } = Astro.props;
+
+const elementColor: Record<Element, string> = {
+  fire:    'var(--el-fire)',
+  ice:     'var(--el-ice)',
+  earth:   'var(--el-earth)',
+  wind:    'var(--el-wind)',
+  thunder: 'var(--el-thunder)',
+};
+
+const elementLabel: Record<Element, string> = {
+  fire:    '불',
+  ice:     '얼음',
+  earth:   '땅',
+  wind:    '바람',
+  thunder: '번개',
+};
+
+const color = elementColor[element];
+const label = elementLabel[element];
+---
+
+<img
+  src={`/assets/elements/${element}.svg`}
+  alt={label}
+  width={size}
+  height={size}
+  style={`color:${color};filter:none;vertical-align:middle;`}
+  aria-label={`${label} 속성`}
+/>

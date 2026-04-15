@@ -1,0 +1,121 @@
+---
+interface NavItem {
+  label: string;
+  href: string;
+  badge?: string;
+}
+
+interface Props {
+  title?: string;
+  items?: NavItem[];
+}
+
+const { title, items = [] } = Astro.props;
+const pathname = Astro.url.pathname;
+---
+
+<style>
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+  }
+  .sidebar-section {
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--bg-surface);
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .sidebar-heading {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-raised);
+    margin: 0;
+    display: block;
+  }
+  .sidebar-list {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+  }
+  .sidebar-item a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 10px;
+    font-size: 0.8125rem;
+    color: var(--fg-muted);
+    text-decoration: none;
+    transition: background 120ms, color 120ms;
+  }
+  .sidebar-item a:hover {
+    background: var(--bg-raised);
+    color: var(--fg-primary);
+  }
+  .sidebar-item a[aria-current="page"] {
+    color: var(--accent);
+    background: oklch(0.76 0.14 220 / 0.08);
+  }
+  .sidebar-badge {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: var(--accent-gold);
+    color: oklch(0.11 0.018 260);
+    padding: 1px 4px;
+    border-radius: 2px;
+  }
+  /* 모바일: 수평 탭 스트립 */
+  @media (max-width: 1023px) {
+    .sidebar {
+      width: 100%;
+    }
+    .sidebar-section {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .sidebar-heading {
+      display: none;
+    }
+    .sidebar-list {
+      display: flex;
+      flex-direction: row;
+      padding: 0;
+      white-space: nowrap;
+    }
+    .sidebar-item a {
+      padding: 8px 12px;
+      border-right: 1px solid var(--border);
+    }
+    .sidebar-item a[aria-current="page"] {
+      border-bottom: 2px solid var(--accent);
+    }
+  }
+</style>
+
+<aside class="sidebar">
+  {items.length > 0 && (
+    <div class="sidebar-section">
+      {title && <span class="sidebar-heading">{title}</span>}
+      <ul class="sidebar-list">
+        {items.map(item => (
+          <li class="sidebar-item">
+            <a
+              href={item.href}
+              aria-current={pathname === item.href || pathname.startsWith(item.href + '/') ? 'page' : undefined}
+            >
+              <span>{item.label}</span>
+              {item.badge && <span class="sidebar-badge">{item.badge}</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+  <slot />
+</aside>

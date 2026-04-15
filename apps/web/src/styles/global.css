@@ -3,91 +3,105 @@
 @plugin "@tailwindcss/typography";
 
 /* ═══════════════════════════════════════════════
-   Tailwind v4 @theme — OKLCH 토큰 등록
+   Tailwind v4 @theme — 게이밍 위키 다크 토큰
    ═══════════════════════════════════════════════ */
 @theme {
   /* 배경 */
-  --color-bg-base:      oklch(0.14 0.045 268);
-  --color-bg-surface:   oklch(0.19 0.045 268);
-  --color-bg-raised:    oklch(0.24 0.050 280);
+  --color-bg-base:      oklch(0.11 0.018 260);
+  --color-bg-surface:   oklch(0.15 0.018 260);
+  --color-bg-raised:    oklch(0.19 0.020 260);
 
   /* 보더 */
-  --color-border:       oklch(0.34 0.030 275);
-  --color-border-strong:oklch(0.48 0.040 280);
+  --color-border:       oklch(0.28 0.015 260);
+  --color-border-strong:oklch(0.42 0.020 260);
 
   /* 전경 */
-  --color-fg-primary:   oklch(0.97 0.008 280);
-  --color-fg-muted:     oklch(0.78 0.020 280);
-  --color-fg-dim:       oklch(0.58 0.020 275);
+  --color-fg-primary:   oklch(0.96 0.006 260);
+  --color-fg-muted:     oklch(0.70 0.012 260);
+  --color-fg-dim:       oklch(0.50 0.012 260);
 
   /* 악센트 */
-  --color-accent:       oklch(0.86 0.085 335);
-  --color-accent-soft:  oklch(0.78 0.070 335);
-  --color-accent-alt:   oklch(0.87 0.055 290);
-  --color-accent-deep:  oklch(0.45 0.120 310);
+  --color-accent:       oklch(0.76 0.14 220);   /* ice cyan */
+  --color-accent-hot:   oklch(0.72 0.18 40);    /* hot orange — expired/urgent */
+  --color-accent-gold:  oklch(0.82 0.13 85);    /* amber — SSR/S-tier */
 
   /* 상태 */
   --color-danger:       oklch(0.68 0.18 25);
   --color-success:      oklch(0.74 0.12 150);
 
+  /* 원소색 (도트 전용) */
+  --color-element-fire:    oklch(0.70 0.18 35);
+  --color-element-ice:     oklch(0.80 0.12 220);
+  --color-element-earth:   oklch(0.72 0.10 100);
+  --color-element-wind:    oklch(0.80 0.11 150);
+  --color-element-thunder: oklch(0.80 0.15 85);
+
   /* 폰트 패밀리 */
   --font-sans: 'SUIT Variable', 'SUIT', sans-serif;
   --font-mono: 'Departure Mono', 'Courier New', monospace;
 
-  /* 타입 스케일 */
-  --text-display: clamp(4rem, 9vw, 7rem);
-  --text-hero:    clamp(2.5rem, 5vw, 4.5rem);
-  --text-h1:      3rem;
-  --text-h2:      2rem;
-  --text-body:    1rem;
-  --text-meta:    0.75rem;
+  /* 타입 스케일 — wiki compact */
+  --text-display: 1.875rem;   /* 30px max */
+  --text-h1:      1.5rem;     /* 24px */
+  --text-h2:      1.25rem;    /* 20px */
+  --text-h3:      1rem;       /* 16px */
+  --text-body:    0.875rem;   /* 14px */
+  --text-meta:    0.75rem;    /* 12px */
+  --text-label:   0.6875rem;  /* 11px */
 
-  /* 공간 스케일 (4pt 기반) */
-  --spacing-2xs: 0.25rem;   /* 4px */
-  --spacing-xs:  0.5rem;    /* 8px */
-  --spacing-sm:  0.75rem;   /* 12px */
-  --spacing-md:  1rem;      /* 16px */
-  --spacing-lg:  1.5rem;    /* 24px */
-  --spacing-xl:  2rem;      /* 32px */
-  --spacing-2xl: 3rem;      /* 48px */
-  --spacing-3xl: 4rem;      /* 64px */
-  --spacing-4xl: 6rem;      /* 96px */
+  /* 공간 스케일 — wiki tight */
+  --spacing-0:   0;
+  --spacing-0\.5: 0.125rem;  /* 2px */
+  --spacing-1:   0.25rem;    /* 4px */
+  --spacing-2:   0.375rem;   /* 6px */
+  --spacing-3:   0.5rem;     /* 8px */
+  --spacing-4:   0.75rem;    /* 12px */
+  --spacing-5:   1rem;       /* 16px */
+  --spacing-6:   1.5rem;     /* 24px */
+  --spacing-7:   2rem;       /* 32px */
+  --spacing-8:   3rem;       /* 48px */
 }
 
 /* ═══════════════════════════════════════════════
-   CSS 커스텀 프로퍼티 (런타임, var() 참조용)
+   CSS 커스텀 프로퍼티 (런타임)
    ═══════════════════════════════════════════════ */
 :root {
-  --bg-base:       oklch(0.14 0.045 268);
-  --bg-surface:    oklch(0.19 0.045 268);
-  --bg-raised:     oklch(0.24 0.050 280);
-  --border:        oklch(0.34 0.030 275);
-  --border-strong: oklch(0.48 0.040 280);
+  --bg-base:       oklch(0.11 0.018 260);
+  --bg-surface:    oklch(0.15 0.018 260);
+  --bg-raised:     oklch(0.19 0.020 260);
+  --border:        oklch(0.28 0.015 260);
+  --border-strong: oklch(0.42 0.020 260);
 
-  --fg-primary:    oklch(0.97 0.008 280);
-  --fg-muted:      oklch(0.78 0.020 280);
-  --fg-dim:        oklch(0.58 0.020 275);
+  --fg-primary:    oklch(0.96 0.006 260);
+  --fg-muted:      oklch(0.70 0.012 260);
+  --fg-dim:        oklch(0.50 0.012 260);
 
-  --accent:        oklch(0.86 0.085 335);
-  --accent-soft:   oklch(0.78 0.070 335);
-  --accent-alt:    oklch(0.87 0.055 290);
-  --accent-deep:   oklch(0.45 0.120 310);
+  --accent:        oklch(0.76 0.14 220);   /* ice cyan */
+  --accent-hot:    oklch(0.72 0.18 40);    /* hot orange */
+  --accent-gold:   oklch(0.82 0.13 85);    /* amber gold */
 
   --danger:        oklch(0.68 0.18 25);
   --success:       oklch(0.74 0.12 150);
 
+  --el-fire:    oklch(0.70 0.18 35);
+  --el-ice:     oklch(0.80 0.12 220);
+  --el-earth:   oklch(0.72 0.10 100);
+  --el-wind:    oklch(0.80 0.11 150);
+  --el-thunder: oklch(0.80 0.15 85);
+
   --easing-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Tier 페이지 톤 시프트 — 딥 퍼플 */
+/* Tier 페이지 — 딥 쿨 시프트 */
 body[data-section="tier"] {
-  --bg-base: oklch(0.17 0.10 300);
+  --bg-base: oklch(0.10 0.025 270);
 }
 
 /* ═══════════════════════════════════════════════
-   베이스 스타일
+   베이스 스타일 — 14px compact
    ═══════════════════════════════════════════════ */
 html {
+  font-size: 14px;
   background: var(--bg-base);
   color: var(--fg-primary);
   font-family: 'SUIT Variable', 'SUIT', sans-serif;
@@ -99,82 +113,93 @@ html {
 body {
   background: var(--bg-base);
   color: var(--fg-primary);
-  line-height: 1.65;
+  line-height: 1.45;
   margin: 0;
   min-height: 100dvh;
+  font-size: 1rem; /* 14px (html base) */
 }
 
 * {
   box-sizing: border-box;
 }
 
-/* 배경 텍스처 노이즈 — 0.012 opacity 점 패턴 */
+/* 배경 노이즈 텍스처 */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='oklch(0.97 0.008 280)'/%3E%3C/svg%3E");
-  opacity: 0.012;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='oklch(0.96 0.006 260)'/%3E%3C/svg%3E");
+  opacity: 0.010;
 }
 
-main, nav, footer {
+main, nav, footer, header, aside {
   position: relative;
   z-index: 1;
 }
 
 /* ═══════════════════════════════════════════════
-   모노 폰트 — 쿠폰 코드 전용
+   모노 폰트
    ═══════════════════════════════════════════════ */
 .font-mono, code:not([class]), pre {
   font-family: 'Departure Mono', 'Courier New', monospace;
 }
 
+/* 데이터 테이블 숫자 정렬 */
+table {
+  font-variant-numeric: tabular-nums;
+}
+
 /* ═══════════════════════════════════════════════
-   CopyButton 시그니처 애니메이션 keyframes
+   CopyButton 애니메이션 keyframes
    ═══════════════════════════════════════════════ */
 @keyframes copy-rise {
   0%   { transform: translateY(0); }
-  50%  { transform: translateY(-4px); }
+  50%  { transform: translateY(-3px); }
   100% { transform: translateY(0); }
 }
 
 @keyframes ring-pulse {
-  0%   { outline-offset: 2px; outline-color: oklch(0.87 0.055 290 / 0); }
-  30%  { outline-offset: 2px; outline-color: oklch(0.87 0.055 290 / 0.9); }
-  100% { outline-offset: 8px; outline-color: oklch(0.87 0.055 290 / 0); }
-}
-
-@keyframes copy-fill-fade {
-  0%   { background-color: oklch(0.86 0.085 335); }
-  100% { background-color: oklch(0.86 0.085 335 / 0.3); }
+  0%   { outline-offset: 1px; outline-color: oklch(0.76 0.14 220 / 0); }
+  30%  { outline-offset: 1px; outline-color: oklch(0.76 0.14 220 / 0.9); }
+  100% { outline-offset: 5px; outline-color: oklch(0.76 0.14 220 / 0); }
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .copy-animate {
-    animation:
-      copy-rise 160ms var(--easing-out-quint) forwards;
+    animation: copy-rise 140ms var(--easing-out-quint) forwards;
   }
-
   .copy-success {
-    animation:
-      ring-pulse 200ms var(--easing-out-quint) forwards;
+    animation: ring-pulse 180ms var(--easing-out-quint) forwards;
   }
 }
 
 /* ═══════════════════════════════════════════════
-   유틸리티 — 수평 룰
+   유틸리티
    ═══════════════════════════════════════════════ */
 .rule {
   border: none;
   border-top: 1px solid var(--border);
-  margin: var(--spacing-xl) 0;
+  margin: 1rem 0;
 }
 
-/* ═══════════════════════════════════════════════
-   링크 기본 스타일
-   ═══════════════════════════════════════════════ */
+/* 위키 섹션 헤더 — 11px uppercase label */
+.wiki-section-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  opacity: 0.7;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
 a {
   color: inherit;
+}
+
+a:hover {
+  color: var(--accent);
 }

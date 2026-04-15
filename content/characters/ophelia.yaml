@@ -1,0 +1,16 @@
+# verify: element/style 공식 확인 필요
+slug: ophelia
+name_ko: 오펠리아
+name_en: Ophelia
+region: ellendor
+element: ice
+style: assassin
+rarity: SSR
+role: "얼음 암살 딜러"
+cv_kr: ""
+cv_jp: ""
+description: "차가운 얼음 속성을 다루는 암살자. 그림자에서 나타나 적의 급소를 노리는 냉혹한 전략가."
+portrait: /assets/characters/portrait/ophelia.png
+full: /assets/characters/full/ophelia.png
+source_url: https://stardive.netmarble.com/ko
+tierS: false

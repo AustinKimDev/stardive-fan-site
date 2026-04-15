@@ -1,0 +1,130 @@
+---
+import { CopyButton } from './CopyButton.tsx';
+
+interface Reward { kind: string; name: string; qty: number }
+
+interface Props {
+  code: string;
+  status: 'active' | 'expired' | 'unknown';
+  rewards: Reward[];
+  redemptionUrl: string;
+  platformNotes?: string;
+  source: string;
+  lastVerifiedAt?: Date;
+}
+
+const { code, status, rewards, redemptionUrl, platformNotes, source, lastVerifiedAt } = Astro.props;
+
+const statusLabel = status === 'active' ? '사용 가능' : status === 'expired' ? '만료' : '검증중';
+
+function formatDate(d?: Date): string {
+  if (!d) return '—';
+  return d.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' });
+}
+---
+
+<style>
+  .coupon-row td {
+    padding: 6px 10px;
+    font-size: 0.8125rem;
+    color: var(--fg-muted);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    line-height: 1.4;
+    max-width: 280px;
+  }
+  .coupon-row:hover td {
+    background: var(--bg-raised);
+    color: var(--fg-primary);
+  }
+  .status-badge {
+    display: inline-flex;
+    padding: 1px 6px;
+    border-radius: 2px;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .status-active {
+    color: var(--accent);
+    background: oklch(0.76 0.14 220 / 0.1);
+    border: 1px solid oklch(0.76 0.14 220 / 0.35);
+  }
+  .status-expired {
+    color: var(--accent-hot);
+    background: oklch(0.72 0.18 40 / 0.08);
+    border: 1px solid oklch(0.72 0.18 40 / 0.25);
+  }
+  .status-unknown {
+    color: var(--fg-dim);
+    background: transparent;
+    border: 1px dashed var(--border);
+  }
+  .code-cell {
+    font-family: 'Departure Mono', 'Courier New', monospace;
+    font-size: 1.125rem;
+    color: var(--fg-primary);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .rewards-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.75rem;
+    white-space: normal;
+    line-height: 1.5;
+  }
+  .rewards-list li {
+    white-space: nowrap;
+  }
+  .rewards-list li + li::before {
+    content: ' · ';
+    color: var(--fg-dim);
+    padding: 0 0.15em;
+  }
+  .copy-cell {
+    width: 80px;
+  }
+  .platform-note {
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+  }
+  .verified-date {
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+    font-family: 'Departure Mono', monospace;
+    white-space: nowrap;
+  }
+  .link-small {
+    font-size: 0.6875rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .link-small:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<tr class="coupon-row">
+  <td>
+    <span class:list={['status-badge', `status-${status}`]}>{statusLabel}</span>
+  </td>
+  <td class="code-cell">{code}</td>
+  <td>
+    <ul class="rewards-list">
+      {rewards.map(r => <li>{r.name} ×{r.qty.toLocaleString('ko-KR')}</li>)}
+    </ul>
+  </td>
+  <td class="platform-note">
+    {platformNotes ?? '전 플랫폼'}
+  </td>
+  <td class="verified-date">{formatDate(lastVerifiedAt)}</td>
+  <td class="copy-cell">
+    <CopyButton client:load value={code} />
+  </td>
+</tr>

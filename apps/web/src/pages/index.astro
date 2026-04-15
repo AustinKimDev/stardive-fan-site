@@ -1,34 +1,37 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CouponCard from '../components/CouponCard.astro';
-import CounterStripItem from '../components/CounterStripItem.astro';
-import Rule from '../components/Rule.astro';
+import CouponMiniCard from '../components/CouponMiniCard.astro';
+import CharacterChip from '../components/CharacterChip.astro';
 import { buildMeta } from '../lib/seo';
 
 const allCoupons = await getCollection('coupons');
-const topCoupons = allCoupons.map(e => e.data)
+const activeCoupons = allCoupons
+  .map(e => e.data)
   .filter(c => c.status === 'active')
-  .sort((a, b) => new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime())
-  .slice(0, 3);
-
-const activeCouponCount = allCoupons.filter(e => e.data.status === 'active').length;
+  .sort((a, b) => new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime());
+const activeCouponCount = activeCoupons.length;
 
 const tiers = await getCollection('tier');
 const topTier = tiers.sort((a, b) =>
   new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime()
 )[0];
-
-// 추천 캐릭터 수: tiers에서 S·A 티어 합산
 const tierData = topTier?.data.tiers ?? [];
-const recommendedCount = tierData
-  .filter(t => t.name === 'S' || t.name === 'A')
-  .reduce((acc, t) => acc + t.characters.length, 0);
+const sTierChars = tierData.find(t => t.name === 'S')?.characters ?? [];
+
+const allCharacters = await getCollection('characters');
+const characters = allCharacters.map(e => e.data);
+const characterCount = characters.length;
+
+// 날짜 기준: 출시일 2026-04-15
+const launchDate = new Date('2026-04-15');
+const today = new Date('2026-04-15');
+const daysSince = Math.floor((today.getTime() - launchDate.getTime()) / 86400000) + 1;
 
 const meta = buildMeta({
   path: '/',
   title: '홈',
-  description: '몬스터길들이기 STAR DIVE 쿠폰, 리세마라 티어, 공략을 한눈에.',
+  description: '몬스터길들이기 STAR DIVE 쿠폰, 리세마라 티어, 캐릭터 정보를 한눈에.',
   jsonLd: {
     '@context': 'https://schema.org',
     '@type': 'VideoGame',
@@ -41,158 +44,372 @@ const meta = buildMeta({
 ---
 
 <style>
-  /* ─── 히어로 그리드 ─── */
-  .hero {
+  /* ─── Row 1: 히어로 미니 스트립 ─── */
+  .hero-strip {
     display: grid;
-    grid-template-columns: 7fr 5fr;
-    gap: 2rem;
-    padding: 3rem 0 2rem;
-    align-items: start;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0 10px;
+    border-bottom: 1px solid var(--border);
   }
-  @media (max-width: 680px) {
-    .hero {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .hero-headline {
-    font-family: 'SUIT Variable', 'SUIT', sans-serif;
-    font-size: clamp(4rem, 9vw, 7rem);
-    font-weight: 900;
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    color: var(--fg-primary);
-    margin: 0;
-  }
-  .hero-subheading {
-    font-family: 'SUIT Variable', 'SUIT', sans-serif;
-    font-size: clamp(1.5rem, 3vw, 2.5rem);
-    font-weight: 400;
-    line-height: 0.95;
-    letter-spacing: -0.01em;
-    color: var(--accent);
-    margin: 0.75rem 0 0;
-  }
-  .hero-desc {
-    margin-top: 1.5rem;
-    color: var(--fg-muted);
-    max-inline-size: 48ch;
-    font-size: 1rem;
-    line-height: 1.65;
-  }
-
-  /* ─── 카운터 스트립 ─── */
-  .counter-strip {
+  .hero-left {
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    border-left: 1px solid var(--border);
-    padding-left: 2rem;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
   }
-  @media (max-width: 680px) {
-    .counter-strip {
-      flex-direction: row;
-      border-left: none;
-      border-top: 1px solid var(--border);
-      padding-left: 0;
-      padding-top: 1.5rem;
-      flex-wrap: wrap;
-      gap: 2rem;
-    }
+  .hero-logo {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    flex-shrink: 0;
   }
-
-  /* ─── 섹션 헤더 ─── */
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 1rem;
-  }
-  .section-title {
-    font-family: 'SUIT Variable', 'SUIT', sans-serif;
+  .hero-text {}
+  .hero-title {
     font-size: 1.25rem;
     font-weight: 800;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     color: var(--fg-primary);
     margin: 0;
+    line-height: 1.2;
   }
-  .section-link {
-    font-size: 0.8125rem;
-    color: var(--accent-alt);
+  .hero-tagline {
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+    margin: 1px 0 0;
+    line-height: 1;
+  }
+  .hero-counters {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .counter-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .counter-item:last-child { border-right: none; }
+  .counter-num {
+    font-family: 'Departure Mono', monospace;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .counter-lbl {
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+  }
+  .hero-cta {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    border: 1px solid oklch(0.76 0.14 220 / 0.5);
+    padding: 5px 12px;
+    border-radius: 2px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 150ms, color 150ms;
+    flex-shrink: 0;
+  }
+  .hero-cta:hover {
+    background: oklch(0.76 0.14 220 / 0.1);
+  }
+
+  /* ─── Row 2: 쿠폰 스크롤 스트립 ─── */
+  .coupon-section {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .section-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    opacity: 0.8;
+  }
+  .section-more {
+    font-size: 0.75rem;
+    color: var(--fg-dim);
     text-decoration: none;
     transition: color 150ms;
   }
-  .section-link:hover {
-    color: var(--fg-primary);
+  .section-more:hover {
+    color: var(--accent);
+  }
+  .coupon-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .coupon-scroll::-webkit-scrollbar {
+    height: 4px;
+  }
+  .coupon-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .coupon-scroll::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
   }
 
-  /* ─── 쿠폰 그리드 ─── */
-  .coupon-grid {
+  /* ─── Row 3: 캐릭터 + 티어 2컬럼 ─── */
+  .bottom-row {
     display: grid;
-    gap: 0.75rem;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    grid-template-columns: 3fr 2fr;
+    gap: 12px;
+    padding: 10px 0;
   }
-  @media (max-width: 480px) {
-    .coupon-grid {
+  .panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-raised);
+  }
+  .panel-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--fg-primary);
+    letter-spacing: 0.01em;
+    margin: 0;
+  }
+  .panel-link {
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+    text-decoration: none;
+    transition: color 150ms;
+  }
+  .panel-link:hover { color: var(--accent); }
+  .panel-body {
+    padding: 10px;
+  }
+  .char-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  /* 티어 S 목록 */
+  .s-tier-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .s-tier-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    border-radius: 2px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    transition: border-color 150ms;
+    text-decoration: none;
+    color: inherit;
+  }
+  .s-tier-item:hover { border-color: var(--accent-gold); }
+  .s-tier-portrait {
+    width: 32px;
+    height: 32px;
+    border-radius: 2px;
+    object-fit: cover;
+    object-position: top;
+    background: var(--bg-base);
+    flex-shrink: 0;
+  }
+  .s-tier-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .s-tier-name {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--fg-primary);
+    line-height: 1.2;
+  }
+  .s-tier-meta {
+    font-size: 0.625rem;
+    color: var(--fg-dim);
+  }
+  .s-tier-badge {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--accent-gold);
+    font-family: 'Departure Mono', monospace;
+  }
+  .s-tier-empty {
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+    padding: 8px 0;
+    text-align: center;
+  }
+
+  /* 모바일 */
+  @media (max-width: 768px) {
+    .hero-strip {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .hero-counters {
+      flex-wrap: wrap;
+    }
+    .bottom-row {
       grid-template-columns: 1fr;
     }
   }
-
-  /* ─── 티어 요약 블록 ─── */
-  .tier-pullquote {
-    font-size: clamp(1rem, 2vw, 1.25rem);
-    font-weight: 400;
-    line-height: 1.65;
-    color: var(--fg-muted);
-    max-inline-size: 68ch;
-    padding-left: 1.25rem;
-    border-left: 2px solid var(--border);
-    margin: 0;
+  @media (max-width: 480px) {
+    .counter-item {
+      padding: 4px 7px;
+    }
   }
 </style>
 
 <BaseLayout meta={meta}>
-  <!-- 히어로 + 카운터 스트립 -->
-  <section class="hero">
-    <div>
-      <h1 class="hero-headline">몬길: STAR DIVE</h1>
-      <p class="hero-subheading">팬 정보 허브</p>
-      <p class="hero-desc">
-        오늘 출시된 「몬길: STAR DIVE」의 쿠폰·티어·공략을 실시간으로 정리합니다.
-      </p>
+  <!-- Row 1: 히어로 미니 스트립 -->
+  <div class="hero-strip">
+    <div class="hero-left">
+      <img src="/assets/brand/logo.png" alt="STAR DIVE" class="hero-logo" />
+      <div class="hero-text">
+        <h1 class="hero-title">팬 정보 허브</h1>
+        <p class="hero-tagline">몬길: STAR DIVE 비공식 팬사이트</p>
+      </div>
     </div>
 
-    <div class="counter-strip">
-      <CounterStripItem value={activeCouponCount} label="사용 가능 쿠폰" />
-      <CounterStripItem value={recommendedCount > 0 ? recommendedCount : 5} label="추천 캐릭터" />
-      <CounterStripItem value="1" label="최신 티어 버전" />
+    <div class="hero-counters" role="status" aria-label="사이트 통계">
+      <div class="counter-item">
+        <span class="counter-num">{activeCouponCount}</span>
+        <span class="counter-lbl">쿠폰</span>
+      </div>
+      <div class="counter-item">
+        <span class="counter-num">{characterCount}</span>
+        <span class="counter-lbl">캐릭터</span>
+      </div>
+      <div class="counter-item">
+        <span class="counter-num">1</span>
+        <span class="counter-lbl">티어</span>
+      </div>
+      <div class="counter-item">
+        <span class="counter-num">{daysSince}</span>
+        <span class="counter-lbl">일차</span>
+      </div>
     </div>
-  </section>
 
-  <Rule />
+    <a href="https://stardive.netmarble.com/ko" target="_blank" rel="noreferrer" class="hero-cta">
+      게임 시작 ↗
+    </a>
+  </div>
 
-  <!-- 쿠폰 섹션 -->
-  <section>
-    <div class="section-header">
-      <h2 class="section-title">지금 쓸 수 있는 쿠폰</h2>
-      <a href="/coupons" class="section-link">전체 보기 ↗</a>
+  <!-- Row 2: 쿠폰 스크롤 스트립 -->
+  <div class="coupon-section">
+    <div class="section-bar">
+      <span class="section-label">쿠폰</span>
+      <a href="/coupons" class="section-more">전체 보기 →</a>
     </div>
-    <div class="coupon-grid">
-      {topCoupons.map(c => <CouponCard {...c} />)}
-    </div>
-  </section>
-
-  <!-- 티어 섹션 -->
-  {topTier && (
-    <>
-      <Rule />
-      <section>
-        <div class="section-header">
-          <h2 class="section-title">리세마라 티어</h2>
-          <a href="/tier" class="section-link">자세히 ↗</a>
+    <div class="coupon-scroll" role="list" aria-label="사용 가능 쿠폰">
+      {activeCoupons.map(c => (
+        <div role="listitem">
+          <CouponMiniCard
+            code={c.code}
+            status={c.status}
+            rewards={c.rewards}
+            redemptionUrl={c.redemptionUrl}
+          />
         </div>
-        <blockquote class="tier-pullquote">{topTier.data.summary}</blockquote>
-      </section>
-    </>
-  )}
+      ))}
+      {activeCoupons.length === 0 && (
+        <p style="font-size:0.75rem;color:var(--fg-dim);padding:8px 0">현재 사용 가능한 쿠폰 없음</p>
+      )}
+    </div>
+  </div>
+
+  <!-- Row 3: 캐릭터 그리드 + 티어 미리보기 -->
+  <div class="bottom-row">
+    <!-- 캐릭터 -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">캐릭터</h2>
+        <a href="/characters" class="panel-link">도감 →</a>
+      </div>
+      <div class="panel-body">
+        <div class="char-row">
+          {characters.map(c => (
+            <CharacterChip
+              name={c.name_ko}
+              element={c.element}
+              role={c.style}
+              rarity={c.rarity}
+              slug={c.slug}
+              portrait={c.portrait}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- S 티어 미리보기 -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">S 티어 (리세마라)</h2>
+        <a href="/tier" class="panel-link">전체 →</a>
+      </div>
+      <div class="panel-body">
+        {sTierChars.length > 0 ? (
+          <div class="s-tier-list">
+            {sTierChars.map(c => (
+              <a
+                class="s-tier-item"
+                href={c.slug ? `/characters/${c.slug}` : '/tier'}
+              >
+                {c.slug ? (
+                  <img
+                    class="s-tier-portrait"
+                    src={`/assets/characters/portrait/${c.slug}.png`}
+                    alt={c.name}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class="s-tier-portrait" style="display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:var(--fg-dim)">?</div>
+                )}
+                <div class="s-tier-info">
+                  <div class="s-tier-name">{c.name}</div>
+                  <div class="s-tier-meta">{c.element} · {c.role}</div>
+                </div>
+                <span class="s-tier-badge">S</span>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p class="s-tier-empty">데이터 없음</p>
+        )}
+      </div>
+    </div>
+  </div>
 </BaseLayout>

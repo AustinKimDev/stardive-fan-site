@@ -1,0 +1,90 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CharacterCard from '../components/CharacterCard.astro';
+import { buildMeta } from '../lib/seo';
+
+const entries = await getCollection('characters');
+const characters = entries.map(e => e.data).sort((a, b) => a.name_ko.localeCompare(b.name_ko, 'ko'));
+
+const meta = buildMeta({
+  path: '/characters',
+  title: '몬길 스타다이브 캐릭터 도감',
+  description: `몬스터길들이기 STAR DIVE 출시 캐릭터 ${characters.length}인 — 속성, 스타일, CV 정보.`,
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: '스타다이브 캐릭터 목록',
+    numberOfItems: characters.length,
+  },
+});
+
+const sidebarItems = [
+  { label: '전체', href: '/characters' },
+  { label: '쿠폰', href: '/coupons' },
+  { label: '티어', href: '/tier' },
+];
+---
+
+<style>
+  .page-header {
+    margin-bottom: 12px;
+  }
+  .page-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--fg-primary);
+    margin: 0 0 2px;
+  }
+  .page-sub {
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+    margin: 0;
+  }
+  .char-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .source-note {
+    margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+  }
+</style>
+
+<BaseLayout
+  meta={meta}
+  sidebarTitle="캐릭터"
+  sidebarItems={sidebarItems}
+>
+  <div class="page-header">
+    <h1 class="page-title">캐릭터 도감</h1>
+    <p class="page-sub">출시 {characters.length}인 · 엘렌도르 지역</p>
+  </div>
+
+  <div class="char-grid" role="list" aria-label="캐릭터 목록">
+    {characters.map(c => (
+      <div role="listitem">
+        <CharacterCard
+          slug={c.slug}
+          name_ko={c.name_ko}
+          name_en={c.name_en}
+          element={c.element}
+          style={c.style}
+          rarity={c.rarity}
+          role={c.role}
+          portrait={c.portrait}
+        />
+      </div>
+    ))}
+  </div>
+
+  <p class="source-note">
+    캐릭터 일러스트 © Netmarble. 속성/스타일 정보는 출시 당일 기준이며 추후 공식 업데이트로 변경될 수 있습니다.
+  </p>
+</BaseLayout>

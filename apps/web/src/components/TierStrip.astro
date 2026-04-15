@@ -9,6 +9,7 @@ interface Character {
   element: Element;
   role: Role;
   rarity?: 'SSR' | 'SR' | 'R';
+  slug?: string;
 }
 interface Props {
   name: string;
@@ -17,70 +18,92 @@ interface Props {
 }
 const { name, description, characters } = Astro.props;
 
-const tierAccent: Record<string, string> = {
-  S: 'var(--accent)',
-  A: 'oklch(0.80 0.12 60)',
-  B: 'var(--fg-muted)',
-  C: 'var(--fg-dim)',
+const tierStyle: Record<string, { color: string; bg: string }> = {
+  S: { color: 'var(--accent-gold)', bg: 'oklch(0.82 0.13 85 / 0.08)' },
+  A: { color: 'var(--accent)',      bg: 'oklch(0.76 0.14 220 / 0.06)' },
+  B: { color: 'var(--fg-muted)',    bg: 'transparent' },
+  C: { color: 'var(--fg-dim)',      bg: 'transparent' },
 };
-const accent = tierAccent[name] ?? 'var(--fg-muted)';
+const ts = tierStyle[name] ?? tierStyle.C;
 ---
 
 <style>
   .tier-strip {
     display: flex;
-    align-items: flex-start;
-    gap: 1.5rem;
+    align-items: center;
+    gap: 0;
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 2px;
     background: var(--bg-surface);
-    padding: 1rem 1.25rem;
-    transition: border-color 200ms;
+    overflow: hidden;
+    transition: border-color 180ms;
   }
   .tier-strip:hover {
     border-color: var(--border-strong);
   }
+  .tier-label-col {
+    width: 48px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    border-right: 1px solid var(--border);
+    min-height: 72px;
+    align-self: stretch;
+  }
   .tier-label {
     font-family: 'Departure Mono', 'Courier New', monospace;
-    font-size: clamp(3rem, 5vw, 4.5rem);
+    font-size: 1.5rem;
     font-weight: 700;
     line-height: 1;
-    letter-spacing: -0.02em;
-    flex-shrink: 0;
-    width: 3ch;
-    text-align: center;
+    letter-spacing: -0.01em;
   }
   .tier-content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.625rem;
-    padding-top: 0.25rem;
+    gap: 4px;
+    padding: 8px 12px;
   }
   .tier-description {
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     color: var(--fg-dim);
-    line-height: 1.5;
+    line-height: 1.4;
+    margin: 0;
   }
   .tier-characters {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 6px;
+    align-items: flex-start;
   }
   .tier-empty {
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     color: var(--fg-dim);
     font-style: italic;
   }
 </style>
 
-<div class="tier-strip">
-  <span class="tier-label" style={`color:${accent}`}>{name}</span>
+<div class="tier-strip" style={`background:${ts.bg}`}>
+  <div class="tier-label-col">
+    <span class="tier-label" style={`color:${ts.color}`}>{name}</span>
+  </div>
   <div class="tier-content">
     {description && <p class="tier-description">{description}</p>}
     <div class="tier-characters">
       {characters.length > 0
-        ? characters.map(c => <CharacterChip {...c} />)
+        ? characters.map(c => (
+            <CharacterChip
+              name={c.name}
+              element={c.element}
+              role={c.role}
+              rarity={c.rarity}
+              slug={c.slug}
+              portrait={c.slug ? `/assets/characters/portrait/${c.slug}.png` : undefined}
+            />
+          ))
         : <span class="tier-empty">업데이트 예정</span>
       }
     </div>

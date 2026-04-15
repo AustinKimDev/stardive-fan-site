@@ -1,0 +1,158 @@
+---
+import RarityBadge from './RarityBadge.astro';
+
+type Element = 'fire' | 'ice' | 'earth' | 'wind' | 'thunder';
+type Style = 'brawler' | 'destroyer' | 'assassin' | 'support';
+
+interface Props {
+  slug: string;
+  name_ko: string;
+  name_en: string;
+  element: Element;
+  style: Style;
+  rarity: 'SSR' | 'SR' | 'R';
+  role: string;
+  portrait: string;
+}
+
+const { slug, name_ko, name_en, element, style: charStyle, rarity, role, portrait } = Astro.props;
+
+const elementColor: Record<Element, string> = {
+  fire:    'var(--el-fire)',
+  ice:     'var(--el-ice)',
+  earth:   'var(--el-earth)',
+  wind:    'var(--el-wind)',
+  thunder: 'var(--el-thunder)',
+};
+
+const elementLabel: Record<Element, string> = {
+  fire: '불', ice: '얼음', earth: '땅', wind: '바람', thunder: '번개',
+};
+
+const styleLabel: Record<Style, string> = {
+  brawler: '브롤러', destroyer: '파괴자', assassin: '암살자', support: '서포터',
+};
+---
+
+<style>
+  .char-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    transition: border-color 150ms, background 150ms;
+    text-decoration: none;
+    color: inherit;
+    width: 180px;
+  }
+  .char-card:hover {
+    border-color: var(--accent);
+    background: var(--bg-raised);
+  }
+  .char-portrait {
+    width: 180px;
+    height: 220px;
+    overflow: hidden;
+    background: var(--bg-raised);
+    position: relative;
+  }
+  .char-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+    transition: transform 200ms;
+  }
+  .char-card:hover .char-portrait img {
+    transform: scale(1.02);
+  }
+  .char-portrait-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+    font-family: 'Departure Mono', monospace;
+  }
+  .char-el-dot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid oklch(0.08 0 0 / 0.4);
+  }
+  .char-info {
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-top: 1px solid var(--border);
+  }
+  .char-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+  }
+  .char-name {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--fg-primary);
+    line-height: 1.2;
+  }
+  .char-chips {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+  }
+  .char-chip {
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 1px 5px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    background: var(--bg-raised);
+    color: var(--fg-dim);
+    line-height: 1.4;
+  }
+  .char-chip--element {
+    border-color: currentColor;
+    opacity: 0.8;
+  }
+  .char-role {
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>
+
+<a class="char-card" href={`/characters/${slug}`}>
+  <div class="char-portrait">
+    <img src={portrait} alt={name_ko} loading="lazy" />
+    <span class="char-el-dot" style={`background:${elementColor[element]}`} aria-hidden="true"></span>
+  </div>
+  <div class="char-info">
+    <div class="char-name-row">
+      <span class="char-name">{name_ko}</span>
+      <RarityBadge rarity={rarity} />
+    </div>
+    <div class="char-chips">
+      <span class="char-chip char-chip--element" style={`color:${elementColor[element]}`}>
+        {elementLabel[element]}
+      </span>
+      <span class="char-chip">{styleLabel[charStyle]}</span>
+    </div>
+    <span class="char-role">{role}</span>
+  </div>
+</a>
