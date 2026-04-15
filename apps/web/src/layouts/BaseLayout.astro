@@ -21,7 +21,7 @@ const { meta } = Astro.props;
     <meta property="og:url" content={meta.canonical} />
     <meta property="og:image" content={meta.ogImage} />
     <meta name="twitter:card" content="summary_large_image" />
-    {meta.jsonLd && <script type="application/ld+json" set:html={JSON.stringify(meta.jsonLd)} />}
+    {meta.jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(meta.jsonLd)} />}
     <!-- SUIT Variable: 공식 사이트 폰트 패밀리 연속성 -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css" />

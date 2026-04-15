@@ -12,7 +12,7 @@ if (!latest) throw new Error('티어 문서가 content/tier에 없습니다');
 const { Content } = await render(latest);
 const d = latest.data;
 
-const meta = await buildMeta({
+const meta = buildMeta({
   path: '/tier',
   title: d.title,
   description: d.summary,

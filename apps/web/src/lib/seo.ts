@@ -1,3 +1,7 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { parse as parseYaml } from 'yaml';
+
 export interface SiteConfig {
   siteName: string;
   siteUrl: string;
@@ -16,22 +20,21 @@ export interface PageMeta {
   noindex?: boolean;
 }
 
-// Loaded via @rollup/plugin-yaml at build time
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let _site: SiteConfig | null = null;
 
-async function getSite(): Promise<SiteConfig> {
+function getSite(): SiteConfig {
   if (_site) return _site;
-  // Dynamic import of YAML file via rollup/plugin-yaml
-  const mod = await import('../../../../content/seo/site.yaml');
-  _site = mod.default as SiteConfig;
+  // Read YAML at runtime — works in both dev (vite) and node production
+  const filePath = resolve(process.cwd(), '../../content/seo/site.yaml');
+  const raw = readFileSync(filePath, 'utf-8');
+  _site = parseYaml(raw) as SiteConfig;
   return _site;
 }
 
-export async function buildMeta(
+export function buildMeta(
   input: Omit<PageMeta, 'canonical'> & { path: string },
-): Promise<PageMeta> {
-  const site = await getSite();
+): PageMeta {
+  const site = getSite();
   return {
     title: `${input.title} | ${site.siteName}`,
     description: input.description ?? site.defaultDescription,

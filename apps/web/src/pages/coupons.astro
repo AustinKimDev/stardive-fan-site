@@ -12,7 +12,7 @@ const coupons = all.map(e => e.data).sort((a, b) => {
 const active = coupons.filter(c => c.status === 'active');
 const inactive = coupons.filter(c => c.status !== 'active');
 
-const meta = await buildMeta({
+const meta = buildMeta({
   path: '/coupons',
   title: `몬길 스타다이브 쿠폰 ${new Date().getFullYear()} — 실시간 검증`,
   description: `몬스터길들이기 STAR DIVE 최신 쿠폰 ${active.length}개. 복사 한 번에 사용.`,

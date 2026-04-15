@@ -17,7 +17,7 @@ const topTier = tiers.sort((a, b) =>
   new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime()
 )[0];
 
-const meta = await buildMeta({
+const meta = buildMeta({
   path: '/',
   title: '홈',
   description: '몬스터길들이기 STAR DIVE 쿠폰, 리세마라 티어, 공략을 한눈에.',
