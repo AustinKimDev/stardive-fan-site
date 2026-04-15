@@ -1,0 +1,60 @@
+- code: LOVEMONGIL
+  status: active
+  rewards:
+    - kind: architect
+      name: "넘쳐흐르는 사랑 (프란시스 전용 무기)"
+      qty: 1
+  redemptionUrl: https://coupon.netmarble.com/monster2
+  platformNotes: "iOS는 웹 쿠폰 사이트에서 입력"
+  source: https://game.warkingmom.com/entry/몬길-스타-다이브-쿠폰-캐릭터-티어-등급표-리세마라-방법-추천-공략
+  firstSeenAt: 2026-04-15
+- code: Devlive0410
+  status: active
+  rewards:
+    - { kind: ring, name: "스카", qty: 1 }
+    - { kind: ring, name: "하얀늑대", qty: 1 }
+    - { kind: ring, name: "슬라릿", qty: 1 }
+  redemptionUrl: https://coupon.netmarble.com/monster2
+  source: https://game.warkingmom.com/entry/몬길-스타-다이브-쿠폰-캐릭터-티어-등급표-리세마라-방법-추천-공략
+  firstSeenAt: 2026-04-15
+- code: MONGILDISCORD
+  status: active
+  rewards:
+    - { kind: currency, name: "별빛 수정", qty: 30 }
+    - { kind: material, name: "은은한 별빛 가루", qty: 3 }
+    - { kind: gold, name: "골드", qty: 300000 }
+  redemptionUrl: https://coupon.netmarble.com/monster2
+  source: https://game.warkingmom.com/entry/몬길-스타-다이브-쿠폰-캐릭터-티어-등급표-리세마라-방법-추천-공략
+  firstSeenAt: 2026-04-15
+- code: DINDINISDINDIN
+  status: active
+  rewards:
+    - { kind: ring, name: "쵸파", qty: 1 }
+    - { kind: gold, name: "골드", qty: 10000 }
+  redemptionUrl: https://coupon.netmarble.com/monster2
+  source: https://game.warkingmom.com/entry/몬길-스타-다이브-쿠폰-캐릭터-티어-등급표-리세마라-방법-추천-공략
+  firstSeenAt: 2026-04-15
+- code: MONGILPRESENT
+  status: active
+  rewards:
+    - { kind: ring, name: "쵸푸", qty: 1 }
+    - { kind: ring, name: "포크머거", qty: 1 }
+    - { kind: ring, name: "슬라릿", qty: 1 }
+  redemptionUrl: https://coupon.netmarble.com/monster2
+  source: https://game.warkingmom.com/entry/몬길-스타-다이브-쿠폰-캐릭터-티어-등급표-리세마라-방법-추천-공략
+  firstSeenAt: 2026-04-15
+- code: MONGILREPORT
+  status: active
+  rewards:
+    - { kind: ring, name: "하얀 늑대", qty: 1 }
+  redemptionUrl: https://coupon.netmarble.com/monster2
+  source: https://game.warkingmom.com/entry/몬길-스타-다이브-쿠폰-캐릭터-티어-등급표-리세마라-방법-추천-공략
+  firstSeenAt: 2026-04-15
+- code: GSBGMONGIL
+  status: active
+  rewards:
+    - { kind: ring, name: "쵸푸엉클", qty: 1 }
+    - { kind: gold, name: "골드", qty: 10000 }
+  redemptionUrl: https://coupon.netmarble.com/monster2
+  source: https://game.warkingmom.com/entry/몬길-스타-다이브-쿠폰-캐릭터-티어-등급표-리세마라-방법-추천-공략
+  firstSeenAt: 2026-04-15
