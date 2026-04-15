@@ -7,23 +7,99 @@ const groups = [
 ];
 const pathname = Astro.url.pathname;
 ---
-<nav style="position:sticky;top:0;z-index:40;backdrop-filter:blur(8px);background:oklch(0.14 0.045 268 / 0.85);border-bottom:1px solid var(--border)">
-  <div style="max-width:80rem;margin:0 auto;display:flex;align-items:center;gap:1.5rem;padding:0 1rem;height:3.5rem">
-    <a href="/" style="font-weight:800;letter-spacing:-0.02em;color:var(--fg-primary);text-decoration:none;font-size:1rem">
-      스타다이브
-    </a>
-    <ul style="display:flex;gap:1rem;list-style:none;margin:0;padding:0;font-size:0.875rem">
+<style>
+  .nav-root {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: oklch(0.14 0.045 268 / 0.92);
+    border-bottom: 1px solid var(--border);
+    /* backdrop-filter는 장식용 글래스 효과 → 금지 */
+  }
+  .nav-inner {
+    max-width: 80rem;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    height: 3.5rem;
+  }
+  .nav-logo {
+    font-family: 'SUIT Variable', 'SUIT', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--fg-primary);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    flex-shrink: 0;
+  }
+  .nav-list {
+    display: flex;
+    gap: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav-link {
+    display: inline-block;
+    padding: 0.25rem 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--fg-muted);
+    text-decoration: none;
+    position: relative;
+    transition: color 200ms;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0.625rem;
+    right: 0.625rem;
+    height: 2px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 200ms;
+  }
+  .nav-link[aria-current="page"] {
+    color: var(--fg-primary);
+  }
+  .nav-link[aria-current="page"]::after {
+    opacity: 1;
+  }
+  .nav-link:hover {
+    color: var(--fg-primary);
+  }
+  .nav-link--placeholder {
+    color: var(--fg-dim);
+    font-size: 0.8125rem;
+  }
+  .nav-link--placeholder:hover {
+    color: var(--fg-muted);
+  }
+  .nav-soon {
+    font-size: 0.7rem;
+    color: var(--fg-dim);
+    margin-left: 0.2em;
+    font-variant-alternates: styleset(ss01);
+  }
+</style>
+
+<nav class="nav-root">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">스타다이브</a>
+    <ul class="nav-list">
       {groups.map(g => (
         <li>
           <a
             href={g.href}
             aria-current={pathname === g.href || pathname.startsWith(g.href + '/') ? 'page' : undefined}
-            style={[
-              'padding:0.25rem 0.5rem;border-radius:0.375rem;text-decoration:none;transition:background 200ms',
-              pathname === g.href || pathname.startsWith(g.href + '/') ? 'background:oklch(0.87 0.055 290 / 0.15);color:var(--accent-alt)' : '',
-              g.placeholder ? 'color:var(--fg-dim)' : 'color:var(--fg-muted)',
-            ].filter(Boolean).join(';')}
-          >{g.label}{g.placeholder ? ' (곧)' : ''}</a>
+            class:list={['nav-link', g.placeholder && 'nav-link--placeholder']}
+          >
+            {g.label}
+            {g.placeholder && <span class="nav-soon">(곧)</span>}
+          </a>
         </li>
       ))}
     </ul>
