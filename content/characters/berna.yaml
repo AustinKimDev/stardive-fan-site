@@ -7,9 +7,9 @@ element: fire
 style: support
 rarity: 4seong
 role: "불꽃 서포트 힐러"
-cv_kr: null
-cv_jp: null
-description: "열정적인 불꽃을 다루는 서포터. 팀의 생존을 책임지는 든든한 치유사로, 격렬한 전투 속에서도 냉정함을 유지한다."
+cv_kr: "김새해"
+cv_jp: "久保ユリカ"
+description: "정의감 넘치는 불의 소녀. 불의를 보고 참지 못하는 것은 그녀가 불의 소녀이기 때문인 것은...아무튼 참지 못한다. 힘이 남들 보다 조금... 아니 좀 많이 셀 뿐인 소녀."
 portrait: /assets/characters/portrait/berna.png
 full: /assets/characters/full/berna.png
 source_url: https://stardive.netmarble.com/ko

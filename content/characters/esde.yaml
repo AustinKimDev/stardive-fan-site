@@ -7,9 +7,9 @@ element: wind
 style: assassin
 rarity: 5seong
 role: "바람 암살 딜러"
-cv_kr: null
-cv_jp: null
-description: "바레인 출신의 바람 속성 암살자. 빠른 기동력과 날카로운 공격으로 전장을 누빈다. 출시 픽업 배너 5성."
+cv_kr: "신나리"
+cv_jp: "白石晴香"
+description: "메이드와 토끼풀 여관의 간판 메이드. 언제나 빗자루를 손에 꼭 쥐고 있으며, 바닥을 슥슥 쓸어내는 것이 주된 일상이다. 어떤 사람은 에스데의 빗자루가 서늘한 칼날처럼 느껴질 때가 있다는데... 단순한 착각이 아닐지도?"
 portrait: /assets/characters/portrait/esde.png
 full: /assets/characters/full/esde.png
 source_url: https://guide.netmarble.com/monster2

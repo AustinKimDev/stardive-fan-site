@@ -7,9 +7,9 @@ element: thunder
 style: brawler
 rarity: 5seong
 role: "번개 브롤러 전사"
-cv_kr: null
-cv_jp: null
-description: "세레니아 출신의 번개 속성 브롤러. 번개처럼 빠른 주먹으로 근거리를 제압한다. 출시 픽업 배너 5성."
+cv_kr: "강시현"
+cv_jp: "高柳知葉"
+description: "돈을 무지하게 밝히는 엘프. 돈을 벌기 위해 하루에도 의뢰를 몇 탕씩 뛰곤 한다. 그녀의 시간은 금이니 함부로 말을 걸지 않는 게 좋겠다. 괜히 돈을 뜯기게 될지도 모르니 말이다."
 portrait: /assets/characters/portrait/penny.png
 full: /assets/characters/full/penny.png
 source_url: https://guide.netmarble.com/monster2

@@ -7,9 +7,9 @@ element: earth
 style: brawler
 rarity: 5seong
 role: "대지 브롤러 전사"
-cv_kr: null
-cv_jp: null
-description: "수라 출신의 대지 속성 브롤러. 대지의 힘을 빌려 강력한 근접 전투를 펼친다. 출시 픽업 배너 5성."
+cv_kr: "방시우"
+cv_jp: "瀬戸麻沙美"
+description: "항상 유쾌하고 호방한 요괴들의 리더이자 도깨비의 후예. 요괴를 괴롭히고 숲을 침범하는 인간들을 두들겨 패서 쫓아내지만, 반대로 인간에게 간섭하는 요괴를 혼내기도 하는 등, 인간과 요괴의 사이에서 둘의 관계를 조율하고 있다."
 portrait: /assets/characters/portrait/gabi.png
 full: /assets/characters/full/gabi.png
 source_url: https://guide.netmarble.com/monster2

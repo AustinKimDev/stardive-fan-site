@@ -7,9 +7,9 @@ element: fire
 style: destroyer
 rarity: 5seong
 role: "불꽃 파괴 지휘관"
-cv_kr: null
-cv_jp: null
-description: "남령 출신의 불 속성 파괴자. 강인한 의지와 파괴력으로 전선을 이끄는 지휘관형 딜러. 출시 픽업 배너 5성."
+cv_kr: "황창영"
+cv_jp: "高塚智人"
+description: "신수들의 모임, 백수당을 이끄는 백호 신수. 초월적인 능력을 지닌 만큼 그 정신력도 남달라 휘둘리는 법이 없으며, 어떤 상황에서도 여유를 잃지 않는 성격이다. 매사 무심한 듯 보이지만, 언제나 본질을 꿰뚫어보는 신비로운 존재다."
 portrait: /assets/characters/portrait/sangun.png
 full: /assets/characters/full/sangun.png
 source_url: https://guide.netmarble.com/monster2

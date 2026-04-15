@@ -7,9 +7,9 @@ element: wind
 style: support
 rarity: 5seong
 role: "바람 지원 서포터"
-cv_kr: null
-cv_jp: null
-description: "수라 출신의 바람 속성 서포터. 팀 전체의 기동력을 높이는 전략적 지원 캐릭터. 출시 픽업 배너 5성."
+cv_kr: "이보희"
+cv_jp: "安野希世乃"
+description: "따뜻하고 인자한 미소를 지닌, 성숙한 분위기의 여성. 몸에 밴 우아한 몸짓과 듣는 이의 마음까지 치유하는 비파 연주는 그녀의 특기이다. 또한 백아 최고의 기생방인 도화 기방의 지배인, 행수로서도 널리 알려져 있다."
 portrait: /assets/characters/portrait/jiwon.png
 full: /assets/characters/full/jiwon.png
 source_url: https://guide.netmarble.com/monster2

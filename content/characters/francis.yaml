@@ -7,9 +7,9 @@ element: earth
 style: destroyer
 rarity: 4seong
 role: "대지 파괴 탱커"
-cv_kr: null
-cv_jp: null
-description: "굳건한 대지의 힘을 다루는 파괴자. 압도적인 체력과 공격력으로 최전선을 지키는 수호자."
+cv_kr: "이지현"
+cv_jp: "日笠陽子"
+description: "세상을 사랑으로 물들이고 싶은 천재 의술사. 하지만 보이는 사람마다 사랑의 묘약을 주사하려는 괴짜 의료 연구원으로도 유명하다. 갑자기 얼굴을 들이밀어 냄새를 맡더라도 놀라지 말자."
 portrait: /assets/characters/portrait/francis.png
 full: /assets/characters/full/francis.png
 source_url: https://stardive.netmarble.com/ko

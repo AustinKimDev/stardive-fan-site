@@ -7,9 +7,9 @@ element: earth
 style: brawler
 rarity: 4seong
 role: "대지 브롤러"
-cv_kr: null
-cv_jp: null
-description: "남령 출신의 대지 속성 브롤러. 거대한 체격과 강인한 주먹으로 근거리 전투를 지배한다."
+cv_kr: "민승우"
+cv_jp: "増元拓也"
+description: "몬길러스 낙산 지부장이자, 백아 최고의 범 사냥꾼. 강한 자와 겨루는 것을 즐기며, 그 힘을 인정하면 동료로 받아들이려는 경향이 있다. 그러나 아무리 강한 자라도 타인을 차별하거나 부당한 이득을 취하는 모습을 보인다면, 망설임 없이 창을 겨눈다."
 portrait: /assets/characters/portrait/iho.png
 full: /assets/characters/full/iho.png
 source_url: https://guide.netmarble.com/monster2

@@ -7,9 +7,9 @@ element: wind
 style: support
 rarity: 4seong
 role: "바람 서포터"
-cv_kr: null
-cv_jp: null
-description: "세레니아 출신의 밝고 쾌활한 바람 속성 서포터. 꽃처럼 부드럽지만 전장에서는 강력한 지원을 펼친다."
+cv_kr: "김채린"
+cv_jp: "立花日菜"
+description: "순수하고 해맑은 엘프의 특성을 그대로 물려받아 매사 즐겁고 행복한 소녀. 딱히 많은 이들과 만날 기회가 없어 누군가와 소통할 때 거침없이 생각나는 대로 내뱉는 팩트폭력배다. 데이지의 악의 없는 팩트폭력에 상처받지 않도록 주의하자."
 portrait: /assets/characters/portrait/daisy.png
 full: /assets/characters/full/daisy.png
 source_url: https://guide.netmarble.com/monster2

@@ -7,9 +7,9 @@ element: wind
 style: brawler
 rarity: 4seong
 role: "바람 브롤러 전사"
-cv_kr: null
-cv_jp: null
-description: "질풍처럼 빠른 몸놀림을 자랑하는 바람 속성 전사. 적의 대열을 무너뜨리는 돌격 전문가."
+cv_kr: "남도형"
+cv_jp: "山下大輝"
+description: "몬스터에 대한 호기심이 누구보다 강한 청년. 때로는 그 호기심에 무모한 행동도 서슴지 않는다. 그래서일까? 가끔 보면 클라우드는 몬스터와 대화를 나눌 수 있는 경지에 이른 것 같다!"
 portrait: /assets/characters/portrait/cloud.png
 full: /assets/characters/full/cloud.png
 source_url: https://stardive.netmarble.com/ko

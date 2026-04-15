@@ -7,9 +7,9 @@ element: fire
 style: support
 rarity: 4seong
 role: "불꽃 서포터"
-cv_kr: null
-cv_jp: null
-description: "남령 출신의 우아한 불꽃 속성 서포터. 연꽃처럼 고고한 자태 속에 강인한 의지를 품고 있다."
+cv_kr: "이다은"
+cv_jp: "貫井柚佳"
+description: "그림자로 분신을 만들고, 그 자리를 바꾸는 등 자유자재로 그림자를 다룬다. 누군가를 죽이는 것에 망설임이 없으나, 실제로 살생을 저지르지는 않았다고 한다. 이유는 단순한데, 그저 지원이 원하지 않기 때문이다. 만약 그녀를 제어할 지원이 없다면, 누가 소리소문 없이 목숨을 잃어도 이상하지 않을 것이다."
 portrait: /assets/characters/portrait/yeonhwa.png
 full: /assets/characters/full/yeonhwa.png
 source_url: https://guide.netmarble.com/monster2

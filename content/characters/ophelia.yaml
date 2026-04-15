@@ -7,9 +7,9 @@ element: ice
 style: support
 rarity: 5seong
 role: "얼음 지원 서포터"
-cv_kr: null
-cv_jp: null
-description: "엘렌도르 출신의 얼음 속성 서포터. 냉기를 다루는 고귀한 혈통의 지원사. 출시 픽업 배너 5성."
+cv_kr: "김하영"
+cv_jp: "本渡楓"
+description: "솔리메나 명문 귀족 가문의 영애로, 명예를 매우 중시하는 견습기사 출신 모험가. 왜소한 체형에서 뿜어져 나오는 저돌적인 검술이 인상적이다. 고풍스러우면서도 당당한 말투를 보면 약점이 없을 것 같지만... 과연 그럴까?"
 portrait: /assets/characters/portrait/ophelia.png
 full: /assets/characters/full/ophelia.png
 source_url: https://guide.netmarble.com/monster2
