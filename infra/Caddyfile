@@ -1,0 +1,12 @@
+{$SITE_DOMAIN} {
+    encode zstd gzip
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    }
+    @static path *.css *.js *.png *.webp *.svg *.woff2
+    header @static Cache-Control "public, max-age=31536000, immutable"
+    reverse_proxy web:3000
+}
