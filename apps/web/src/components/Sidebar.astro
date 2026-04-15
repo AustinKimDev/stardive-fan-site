@@ -12,6 +12,7 @@ interface Props {
 
 const { title, items = [] } = Astro.props;
 const pathname = Astro.url.pathname;
+const currentSearch = Astro.url.search;
 ---
 
 <style>
@@ -107,7 +108,15 @@ const pathname = Astro.url.pathname;
           <li class="sidebar-item">
             <a
               href={item.href}
-              aria-current={pathname === item.href || pathname.startsWith(item.href + '/') ? 'page' : undefined}
+              aria-current={
+                (() => {
+                  const [itemPath, itemQuery] = item.href.split('?');
+                  if (itemQuery) {
+                    return pathname === itemPath && currentSearch === `?${itemQuery}` ? 'page' : undefined;
+                  }
+                  return pathname === item.href || pathname.startsWith(item.href + '/') ? 'page' : undefined;
+                })()
+              }
             >
               <span>{item.label}</span>
               {item.badge && <span class="sidebar-badge">{item.badge}</span>}

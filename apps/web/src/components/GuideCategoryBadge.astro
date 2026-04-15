@@ -1,0 +1,31 @@
+---
+type GuideCategory = 'reroll' | 'tier' | 'community' | 'event' | 'tip' | 'map';
+
+interface Props {
+  category: GuideCategory;
+}
+
+const { category } = Astro.props;
+
+const labels: Record<GuideCategory, string> = {
+  reroll:    '리세마라',
+  tier:      '티어',
+  map:       '지도',
+  community: '커뮤니티',
+  event:     '이벤트',
+  tip:       '팁',
+};
+
+const styles: Record<GuideCategory, string> = {
+  reroll:    'background:oklch(0.82 0.13 85 / 0.15);color:var(--accent-gold);border:1px solid oklch(0.82 0.13 85 / 0.5)',
+  tier:      'background:oklch(0.82 0.13 85 / 0.15);color:var(--accent-gold);border:1px solid oklch(0.82 0.13 85 / 0.5)',
+  map:       'background:oklch(0.70 0.15 40 / 0.15);color:var(--accent-hot, #f97316);border:1px solid oklch(0.70 0.15 40 / 0.5)',
+  community: 'background:transparent;color:var(--accent-alt, var(--fg-muted));border:1px solid var(--border)',
+  event:     'background:oklch(0.76 0.14 220 / 0.12);color:var(--accent);border:1px solid oklch(0.76 0.14 220 / 0.4)',
+  tip:       'background:transparent;color:var(--fg-dim);border:1px solid var(--border)',
+};
+---
+
+<span style={`display:inline-flex;align-items:center;padding:1px 5px;border-radius:2px;font-size:0.6875rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;line-height:1.2;${styles[category]}`}>
+  {labels[category]}
+</span>

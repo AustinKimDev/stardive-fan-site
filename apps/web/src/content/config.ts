@@ -98,4 +98,19 @@ const artifacts = defineCollection({
   schema: artifactSchema,
 });
 
-export const collections = { coupons, tier, characters, artifacts };
+const guides = defineCollection({
+  loader: glob({ pattern: '**/*.yaml', base: '../../content/guides' }),
+  schema: z.object({
+    slug: z.string(),
+    title: z.string(),
+    category: z.enum(['reroll', 'tier', 'community', 'event', 'tip', 'map']),
+    summary: z.string(),
+    externalUrl: z.string().url().optional(),
+    sourceLabel: z.string().optional(),
+    author: z.string().optional(),
+    publishedAt: z.coerce.date(),
+    verifiedAt: z.coerce.date().optional(),
+  }),
+});
+
+export const collections = { coupons, tier, characters, artifacts, guides };
