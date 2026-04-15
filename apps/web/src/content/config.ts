@@ -32,6 +32,20 @@ const coupons = defineCollection({
   schema: couponSchema,
 });
 
+const characterElement = z.enum(['fire', 'ice', 'earth', 'wind', 'thunder']);
+const characterRole = z.enum(['brawler', 'destroyer', 'assassin', 'support']);
+
+const tierEntry = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+  characters: z.array(z.object({
+    name: z.string(),
+    element: characterElement,
+    role: characterRole,
+    rarity: z.enum(['SSR', 'SR', 'R']).optional(),
+  })),
+});
+
 const tier = defineCollection({
   loader: glob({ pattern: '**/*.md', base: '../../content/tier' }),
   schema: z.object({
@@ -40,6 +54,7 @@ const tier = defineCollection({
     publishedAt: z.coerce.date(),
     context: z.enum(['reroll', 'pve', 'boss', 'story', 'pvp']),
     summary: z.string(),
+    tiers: z.array(tierEntry).optional(),
   }),
 });
 

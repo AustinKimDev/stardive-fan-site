@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CouponCard from '../components/CouponCard.astro';
+import CounterStripItem from '../components/CounterStripItem.astro';
+import Rule from '../components/Rule.astro';
 import { buildMeta } from '../lib/seo';
 
 const allCoupons = await getCollection('coupons');
@@ -17,6 +19,12 @@ const topTier = tiers.sort((a, b) =>
   new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime()
 )[0];
 
+// 추천 캐릭터 수: tiers에서 S·A 티어 합산
+const tierData = topTier?.data.tiers ?? [];
+const recommendedCount = tierData
+  .filter(t => t.name === 'S' || t.name === 'A')
+  .reduce((acc, t) => acc + t.characters.length, 0);
+
 const meta = buildMeta({
   path: '/',
   title: '홈',
@@ -31,47 +39,160 @@ const meta = buildMeta({
   },
 });
 ---
+
+<style>
+  /* ─── 히어로 그리드 ─── */
+  .hero {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    gap: 2rem;
+    padding: 3rem 0 2rem;
+    align-items: start;
+  }
+  @media (max-width: 680px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .hero-headline {
+    font-family: 'SUIT Variable', 'SUIT', sans-serif;
+    font-size: clamp(4rem, 9vw, 7rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--fg-primary);
+    margin: 0;
+  }
+  .hero-subheading {
+    font-family: 'SUIT Variable', 'SUIT', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    color: var(--accent);
+    margin: 0.75rem 0 0;
+  }
+  .hero-desc {
+    margin-top: 1.5rem;
+    color: var(--fg-muted);
+    max-inline-size: 48ch;
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  /* ─── 카운터 스트립 ─── */
+  .counter-strip {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    border-left: 1px solid var(--border);
+    padding-left: 2rem;
+  }
+  @media (max-width: 680px) {
+    .counter-strip {
+      flex-direction: row;
+      border-left: none;
+      border-top: 1px solid var(--border);
+      padding-left: 0;
+      padding-top: 1.5rem;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+  }
+
+  /* ─── 섹션 헤더 ─── */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'SUIT Variable', 'SUIT', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--fg-primary);
+    margin: 0;
+  }
+  .section-link {
+    font-size: 0.8125rem;
+    color: var(--accent-alt);
+    text-decoration: none;
+    transition: color 150ms;
+  }
+  .section-link:hover {
+    color: var(--fg-primary);
+  }
+
+  /* ─── 쿠폰 그리드 ─── */
+  .coupon-grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  }
+  @media (max-width: 480px) {
+    .coupon-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ─── 티어 요약 블록 ─── */
+  .tier-pullquote {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--fg-muted);
+    max-inline-size: 68ch;
+    padding-left: 1.25rem;
+    border-left: 2px solid var(--border);
+    margin: 0;
+  }
+</style>
+
 <BaseLayout meta={meta}>
   <!-- 히어로 + 카운터 스트립 -->
-  <section style="padding:2rem 0 1rem">
-    <h1 style="font-size:clamp(2.25rem, 4.5vw + 1rem, 4.25rem);font-weight:800;letter-spacing:-0.02em;color:var(--fg-primary)">
-      몬길: STAR DIVE<br /><span style="color:var(--accent)">팬 정보 허브</span>
-    </h1>
-    <p style="margin-top:1rem;color:var(--fg-muted);max-inline-size:68ch;font-size:1rem;line-height:1.65">
-      오늘 출시된 「몬길: STAR DIVE」의 쿠폰·티어·공략을 실시간으로 정리합니다.
-    </p>
-    <!-- 숫자 타이포그래피 카운터 스트립 -->
-    <div style="display:flex;gap:2rem;margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1.5rem">
-      <div>
-        <div style="font-family:'Departure Mono','Courier New',monospace;font-size:3rem;font-weight:700;color:var(--accent);line-height:1;font-variant-numeric:tabular-nums">{activeCouponCount}</div>
-        <div style="font-size:0.75rem;color:var(--fg-dim);margin-top:0.25rem">사용 가능 쿠폰</div>
-      </div>
-      <div>
-        <div style="font-family:'Departure Mono','Courier New',monospace;font-size:3rem;font-weight:700;color:var(--fg-muted);line-height:1;font-variant-numeric:tabular-nums">2</div>
-        <div style="font-size:0.75rem;color:var(--fg-dim);margin-top:0.25rem">S 티어 캐릭터</div>
-      </div>
+  <section class="hero">
+    <div>
+      <h1 class="hero-headline">몬길: STAR DIVE</h1>
+      <p class="hero-subheading">팬 정보 허브</p>
+      <p class="hero-desc">
+        오늘 출시된 「몬길: STAR DIVE」의 쿠폰·티어·공략을 실시간으로 정리합니다.
+      </p>
+    </div>
+
+    <div class="counter-strip">
+      <CounterStripItem value={activeCouponCount} label="사용 가능 쿠폰" />
+      <CounterStripItem value={recommendedCount > 0 ? recommendedCount : 5} label="추천 캐릭터" />
+      <CounterStripItem value="1" label="최신 티어 버전" />
     </div>
   </section>
 
-  <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0" />
+  <Rule />
 
+  <!-- 쿠폰 섹션 -->
   <section>
-    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1rem">
-      <h2 style="font-size:1.5rem;font-weight:800;letter-spacing:-0.01em;color:var(--fg-primary)">지금 쓸 수 있는 쿠폰</h2>
-      <a href="/coupons" style="font-size:0.875rem;color:var(--accent-alt);text-decoration:underline;text-underline-offset:0.25rem">전체 보기 →</a>
+    <div class="section-header">
+      <h2 class="section-title">지금 쓸 수 있는 쿠폰</h2>
+      <a href="/coupons" class="section-link">전체 보기 ↗</a>
     </div>
-    <div style="display:grid;gap:0.75rem;grid-template-columns:repeat(auto-fill,minmax(340px,1fr))">
+    <div class="coupon-grid">
       {topCoupons.map(c => <CouponCard {...c} />)}
     </div>
   </section>
 
+  <!-- 티어 섹션 -->
   {topTier && (
-    <section style="margin-top:3rem">
-      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1rem">
-        <h2 style="font-size:1.5rem;font-weight:800;letter-spacing:-0.01em;color:var(--fg-primary)">리세마라 티어</h2>
-        <a href="/tier" style="font-size:0.875rem;color:var(--accent-alt);text-decoration:underline;text-underline-offset:0.25rem">자세히 →</a>
-      </div>
-      <p style="color:var(--fg-muted);max-inline-size:68ch;line-height:1.65">{topTier.data.summary}</p>
-    </section>
+    <>
+      <Rule />
+      <section>
+        <div class="section-header">
+          <h2 class="section-title">리세마라 티어</h2>
+          <a href="/tier" class="section-link">자세히 ↗</a>
+        </div>
+        <blockquote class="tier-pullquote">{topTier.data.summary}</blockquote>
+      </section>
+    </>
   )}
 </BaseLayout>

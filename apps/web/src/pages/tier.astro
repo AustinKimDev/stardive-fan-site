@@ -1,6 +1,8 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import TierStrip from '../components/TierStrip.astro';
+import Rule from '../components/Rule.astro';
 import { buildMeta } from '../lib/seo';
 import { formatDateIso } from '../lib/format';
 
@@ -26,16 +28,85 @@ const meta = buildMeta({
   },
 });
 ---
-<BaseLayout meta={meta}>
-  <header style="margin-bottom:1.5rem">
-    <h1 style="font-size:clamp(2.25rem, 4.5vw + 1rem, 4.25rem);font-weight:800;letter-spacing:-0.02em;color:var(--fg-primary)">{d.title}</h1>
-    <p style="color:var(--fg-dim);margin-top:0.5rem;font-size:0.875rem;font-family:'Departure Mono','Courier New',monospace">
-      v{d.version} · {formatDateIso(d.publishedAt)} · {d.context}
-    </p>
-    <p style="color:var(--fg-muted);margin-top:1rem;font-size:1rem;max-inline-size:68ch">{d.summary}</p>
-  </header>
-  <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0" />
-  <article class="prose prose-invert" style="max-inline-size:68ch;line-height:1.65">
+
+<style>
+  .tier-hero {
+    padding: 3rem 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .tier-version-badge {
+    font-family: 'Departure Mono', 'Courier New', monospace;
+    font-size: 0.8125rem;
+    color: var(--fg-dim);
+    letter-spacing: 0.05em;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.1rem 0.4rem;
+    display: inline-block;
+  }
+  .tier-h1 {
+    font-family: 'SUIT Variable', 'SUIT', sans-serif;
+    font-size: clamp(2.25rem, 4.5vw + 1rem, 4.25rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--fg-primary);
+    margin: 0;
+    line-height: 1.05;
+  }
+  .tier-meta {
+    font-family: 'Departure Mono', 'Courier New', monospace;
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+    margin: 0;
+  }
+  .tier-summary {
+    font-size: 1rem;
+    color: var(--fg-muted);
+    max-inline-size: 68ch;
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  .tier-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .tier-narrative {
+    max-inline-size: 68ch;
+    line-height: 1.65;
+    color: var(--fg-muted);
+  }
+</style>
+
+<BaseLayout meta={meta} dataSection="tier">
+  <div class="tier-hero">
+    <span class="tier-version-badge">v{d.version} · {formatDateIso(d.publishedAt)} · {d.context}</span>
+    <h1 class="tier-h1">{d.title}</h1>
+    <p class="tier-summary">{d.summary}</p>
+  </div>
+
+  <Rule />
+
+  <!-- 구조화된 티어 스트립 -->
+  {d.tiers && d.tiers.length > 0 ? (
+    <section aria-label="티어 목록">
+      <div class="tier-list">
+        {d.tiers.map(t => (
+          <TierStrip name={t.name} description={t.description} characters={t.characters} />
+        ))}
+      </div>
+    </section>
+  ) : null}
+
+  <Rule />
+
+  <!-- 서사 본문 -->
+  <article class="tier-narrative prose prose-invert">
     <Content />
   </article>
 </BaseLayout>
