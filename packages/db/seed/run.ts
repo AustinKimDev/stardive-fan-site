@@ -8,9 +8,7 @@
  *   - coupons: onConflictDoNothing by code
  */
 
-import { config } from 'dotenv';
-import { resolve as resolvePath } from 'node:path';
-config({ path: resolvePath(import.meta.dirname, '../../../.env') });
+// DATABASE_URL은 package.json scripts의 dotenv -e ../../.env 로 주입됨
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve, join, basename, extname } from 'node:path';
 import yaml from 'js-yaml';
@@ -103,29 +101,7 @@ async function seedCharacters(db: ReturnType<typeof createDb>) {
   await db
     .insert(characters)
     .values(rows)
-    .onConflictDoUpdate({
-      target: characters.slug,
-      // Partial index workaround: re-state all updatable columns
-      set: {
-        nameKo: sql`excluded.name_ko`,
-        nameEn: sql`excluded.name_en`,
-        region: sql`excluded.region`,
-        element: sql`excluded.element`,
-        style: sql`excluded.style`,
-        rarity: sql`excluded.rarity`,
-        role: sql`excluded.role`,
-        cvKr: sql`excluded.cv_kr`,
-        cvJp: sql`excluded.cv_jp`,
-        description: sql`excluded.description`,
-        portrait: sql`excluded.portrait`,
-        full: sql`excluded.full`,
-        sourceUrl: sql`excluded.source_url`,
-        tierS: sql`excluded.tier_s`,
-        bloomMax: sql`excluded.bloom_max`,
-        isPublished: sql`excluded.is_published`,
-        updatedAt: sql`now()`,
-      },
-    });
+    .onConflictDoNothing();
 
   console.log(`  characters: ${rows.length} rows upserted`);
 }
@@ -206,17 +182,7 @@ async function seedArtifacts(db: ReturnType<typeof createDb>) {
   await db
     .insert(artifacts)
     .values(rows)
-    .onConflictDoUpdate({
-      target: artifacts.slug,
-      set: {
-        nameKo: sql`excluded.name_ko`,
-        rarity: sql`excluded.rarity`,
-        exclusiveCharacterSlug: sql`excluded.exclusive_character_slug`,
-        description: sql`excluded.description`,
-        sourceUrl: sql`excluded.source_url`,
-        updatedAt: sql`now()`,
-      },
-    });
+    .onConflictDoNothing();
 
   console.log(`  artifacts: ${rows.length} rows upserted`);
 }
@@ -270,22 +236,7 @@ async function seedGuides(db: ReturnType<typeof createDb>) {
   await db
     .insert(guides)
     .values(rows)
-    .onConflictDoUpdate({
-      target: guides.slug,
-      set: {
-        title: sql`excluded.title`,
-        category: sql`excluded.category`,
-        summary: sql`excluded.summary`,
-        bodyMd: sql`excluded.body_md`,
-        sections: sql`excluded.sections`,
-        sourceUrl: sql`excluded.source_url`,
-        sourceLabel: sql`excluded.source_label`,
-        author: sql`excluded.author`,
-        isPublished: sql`excluded.is_published`,
-        publishedAt: sql`excluded.published_at`,
-        updatedAt: sql`now()`,
-      },
-    });
+    .onConflictDoNothing();
 
   console.log(`  guides: ${rows.length} rows upserted`);
 }
@@ -347,19 +298,7 @@ async function seedTiers(db: ReturnType<typeof createDb>) {
   await db
     .insert(tiers)
     .values(rows)
-    .onConflictDoUpdate({
-      target: tiers.slug,
-      set: {
-        title: sql`excluded.title`,
-        version: sql`excluded.version`,
-        context: sql`excluded.context`,
-        summary: sql`excluded.summary`,
-        tierData: sql`excluded.tier_data`,
-        isPublished: sql`excluded.is_published`,
-        publishedAt: sql`excluded.published_at`,
-        updatedAt: sql`now()`,
-      },
-    });
+    .onConflictDoNothing();
 
   console.log(`  tiers: ${rows.length} rows upserted`);
 }
