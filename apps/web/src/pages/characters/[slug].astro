@@ -1,25 +1,33 @@
 ---
-export const prerender = true;
-import { getCollection } from 'astro:content';
+export const prerender = false;
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import RarityBadge from '../../components/RarityBadge.astro';
 import { buildMeta } from '../../lib/seo';
+import { apiFetch } from '../../lib/api';
+import type { CharacterResponse, ArtifactResponse } from '@stardive/shared';
 
-export async function getStaticPaths() {
-  const entries = await getCollection('characters');
-  return entries.map(e => ({
-    params: { slug: e.data.slug },
-    props: { character: e.data },
-  }));
+const { slug } = Astro.params;
+
+let c: CharacterResponse | null = null;
+try {
+  const all = await apiFetch<CharacterResponse[]>('/characters');
+  c = all.find(ch => ch.slug === slug) ?? null;
+} catch (e) {
+  console.warn('API unavailable, using empty data');
 }
 
-const { character: c } = Astro.props;
+if (!c) {
+  return Astro.redirect('/characters');
+}
 
 // 관련 아티팩트 조회
-const allArtifacts = await getCollection('artifacts');
-const relatedArtifacts = allArtifacts
-  .map(e => e.data)
-  .filter(a => a.exclusive_character_slug === c.slug);
+let relatedArtifacts: ArtifactResponse[] = [];
+try {
+  const allArtifacts = await apiFetch<ArtifactResponse[]>('/artifacts');
+  relatedArtifacts = allArtifacts.filter(a => a.exclusiveCharacterSlug === c!.slug);
+} catch (e) {
+  console.warn('API unavailable, using empty data');
+}
 
 const elementLabel: Record<string, string> = {
   fire: '불', ice: '얼음', earth: '땅', wind: '바람', thunder: '번개',
@@ -46,26 +54,30 @@ const rarityArtColor: Record<string, string> = {
 
 const meta = buildMeta({
   path: `/characters/${c.slug}`,
-  title: `${c.name_ko} (${c.name_en}) — 몬길 스타다이브`,
-  description: c.description ?? `${c.name_ko} — 몬길 스타다이브 캐릭터 정보.`,
+  title: `${c.nameKo} (${c.nameEn}) — 몬길 스타다이브`,
+  description: c.description ?? `${c.nameKo} — 몬길 스타다이브 캐릭터 정보.`,
   jsonLd: {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    name: c.name_ko,
-    alternateName: c.name_en,
+    name: c.nameKo,
+    alternateName: c.nameEn,
     description: c.description,
     image: c.portrait ? `https://stardive-fan-site.vercel.app${c.portrait}` : undefined,
   },
 });
 
-const allEntries = await getCollection('characters');
-const sidebarItems = allEntries
-  .map(e => e.data)
-  .sort((a, b) => a.name_ko.localeCompare(b.name_ko, 'ko'))
-  .map(ch => ({
-    label: ch.name_ko,
-    href: `/characters/${ch.slug}`,
-  }));
+let sidebarItems: { label: string; href: string }[] = [];
+try {
+  const allChars = await apiFetch<CharacterResponse[]>('/characters');
+  sidebarItems = allChars
+    .sort((a, b) => a.nameKo.localeCompare(b.nameKo, 'ko'))
+    .map(ch => ({
+      label: ch.nameKo,
+      href: `/characters/${ch.slug}`,
+    }));
+} catch (e) {
+  console.warn('API unavailable, using empty data');
+}
 ---
 
 <style>
@@ -279,13 +291,13 @@ const sidebarItems = allEntries
         <img
           class="char-portrait-img"
           src={c.full}
-          alt={`${c.name_ko} 풀 일러스트`}
+          alt={`${c.nameKo} 풀 일러스트`}
           loading="eager"
           decoding="async"
         />
       ) : (
-        <div class="char-portrait-placeholder" role="img" aria-label={`${c.name_ko} 이미지 준비중`}>
-          <span class="placeholder-name">{c.name_ko}</span>
+        <div class="char-portrait-placeholder" role="img" aria-label={`${c.nameKo} 이미지 준비중`}>
+          <span class="placeholder-name">{c.nameKo}</span>
           <span class="placeholder-sub">이미지 준비중</span>
         </div>
       )}
@@ -295,10 +307,10 @@ const sidebarItems = allEntries
     <div class="char-info-col">
       <div class="char-name-block">
         <h1 class="char-name-ko">
-          {c.name_ko}
-          <RarityBadge rarity={c.rarity} />
+          {c.nameKo}
+          <RarityBadge rarity={c.rarity as any} />
         </h1>
-        <p class="char-name-en">{c.name_en}</p>
+        <p class="char-name-en">{c.nameEn}</p>
       </div>
 
       <table class="info-table">
@@ -335,11 +347,11 @@ const sidebarItems = allEntries
           <tr>
             <th>CV</th>
             <td>
-              {(c.cv_kr || c.cv_jp) ? (
+              {(c.cvKr || c.cvJp) ? (
                 <>
-                  {c.cv_kr && <span>KR {c.cv_kr}</span>}
-                  {c.cv_kr && c.cv_jp && <span style="margin:0 6px;color:var(--fg-dim)">·</span>}
-                  {c.cv_jp && <span>JP {c.cv_jp}</span>}
+                  {c.cvKr && <span>KR {c.cvKr}</span>}
+                  {c.cvKr && c.cvJp && <span style="margin:0 6px;color:var(--fg-dim)">·</span>}
+                  {c.cvJp && <span>JP {c.cvJp}</span>}
                 </>
               ) : (
                 <span class="td-muted">미확인</span>
@@ -361,8 +373,8 @@ const sidebarItems = allEntries
           <div class="artifact-chips">
             {relatedArtifacts.map(art => (
               <a class="artifact-chip" href="/artifacts">
-                <RarityBadge rarity={art.rarity} />
-                {art.name_ko}
+                <RarityBadge rarity={art.rarity as any} />
+                {art.nameKo}
               </a>
             ))}
           </div>
@@ -371,7 +383,7 @@ const sidebarItems = allEntries
 
       <p class="source-note">
         출처:{' '}
-        <a href={c.source_url ?? 'https://stardive.netmarble.com/ko'} target="_blank" rel="noreferrer" class="source-link">
+        <a href={'https://stardive.netmarble.com/ko'} target="_blank" rel="noreferrer" class="source-link">
           공식 사이트 ↗
         </a>{' '}
         · 이미지 출처: 넷마블 「몬길: STAR DIVE」 © Netmarble. 비공식 팬 페이지.

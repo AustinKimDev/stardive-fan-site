@@ -1,17 +1,56 @@
 ---
-import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TierStrip from '../components/TierStrip.astro';
 import { buildMeta } from '../lib/seo';
 import { formatDateIso } from '../lib/format';
+import { apiFetch } from '../lib/api';
 
-const entries = await getCollection('tier');
-const latest = entries.sort((a, b) =>
-  new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime()
-)[0];
-if (!latest) throw new Error('티어 문서가 content/tier에 없습니다');
-const { Content } = await render(latest);
-const d = latest.data;
+interface TierCharacter {
+  name: string;
+  element: string;
+  role: string;
+  rarity?: string;
+  slug?: string;
+}
+interface TierEntry {
+  name: string;
+  description?: string;
+  characters: TierCharacter[];
+}
+interface TierResponse {
+  id: number;
+  slug: string;
+  title: string;
+  version: string;
+  publishedAt: string;
+  context: string;
+  summary: string;
+  tiers?: TierEntry[];
+  bodyMd?: string | null;
+}
+
+let d: TierResponse | null = null;
+try {
+  const allTiers = await apiFetch<TierResponse[]>('/tiers');
+  d = allTiers.sort((a, b) =>
+    new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+  )[0] ?? null;
+} catch (e) {
+  console.warn('API unavailable, using empty data');
+}
+
+if (!d) {
+  d = {
+    id: 0,
+    slug: 'placeholder',
+    title: '리세마라 티어 (데이터 로딩 중)',
+    version: '0.0',
+    publishedAt: new Date().toISOString(),
+    context: 'reroll',
+    summary: 'API 연결 후 데이터가 표시됩니다.',
+    tiers: [],
+  };
+}
 
 const meta = buildMeta({
   path: '/tier',
@@ -213,7 +252,7 @@ const contextTabs = [
       <h1 class="tier-title">{d.title}</h1>
       <p class="tier-summary">{d.summary}</p>
     </div>
-    <span class="tier-version">v{d.version} · {formatDateIso(d.publishedAt)}</span>
+    <span class="tier-version">v{d.version} · {formatDateIso(new Date(d.publishedAt))}</span>
   </div>
 
   <!-- 컨텍스트 탭 -->
@@ -239,22 +278,24 @@ const contextTabs = [
     <section aria-label="티어 목록">
       <div class="tier-list">
         {d.tiers.map(t => (
-          <TierStrip name={t.name} description={t.description} characters={t.characters} />
+          <TierStrip name={t.name} description={t.description} characters={t.characters as any} />
         ))}
       </div>
     </section>
   ) : null}
 
   <!-- 서사 -->
-  <article class="tier-narrative">
-    <Content />
-  </article>
+  {d.bodyMd && (
+    <article class="tier-narrative">
+      <p style="white-space:pre-wrap;font-size:0.8125rem;color:var(--fg-muted);line-height:1.55">{d.bodyMd}</p>
+    </article>
+  )}
 
   <!-- 푸터 메타 -->
   <div class="tier-footer-meta">
     <span>VERSION {d.version}</span>
     <span>·</span>
-    <span>UPDATED {formatDateIso(d.publishedAt)}</span>
+    <span>UPDATED {formatDateIso(new Date(d.publishedAt))}</span>
     <span>·</span>
     <span>{d.context.toUpperCase()}</span>
     <span>·</span>

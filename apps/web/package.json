@@ -16,6 +16,7 @@
     "@astrojs/react": "^4.0.0",
     "@astrojs/sitemap": "^3.2.0",
     "@resvg/resvg-js": "^2.6.2",
+    "@stardive/shared": "workspace:^",
     "astro": "^5.7.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

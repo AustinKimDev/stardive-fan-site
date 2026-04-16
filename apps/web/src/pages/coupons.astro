@@ -1,14 +1,20 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CouponRow from '../components/CouponRow.astro';
 import { buildMeta } from '../lib/seo';
+import { apiFetch } from '../lib/api';
+import type { CouponResponse } from '@stardive/shared';
 
-const all = await getCollection('coupons');
-const coupons = all.map(e => e.data).sort((a, b) => {
-  if (a.status !== b.status) return a.status === 'active' ? -1 : 1;
-  return new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime();
-});
+let coupons: CouponResponse[] = [];
+try {
+  const all = await apiFetch<CouponResponse[]>('/coupons');
+  coupons = all.sort((a, b) => {
+    if (a.status !== b.status) return a.status === 'active' ? -1 : 1;
+    return new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime();
+  });
+} catch (e) {
+  console.warn('API unavailable, using empty data');
+}
 const active = coupons.filter(c => c.status === 'active');
 const inactive = coupons.filter(c => c.status !== 'active');
 
@@ -169,12 +175,12 @@ const sidebarItems = [
             {active.map(c => (
               <CouponRow
                 code={c.code}
-                status={c.status}
+                status={c.status as any}
                 rewards={c.rewards}
                 redemptionUrl={c.redemptionUrl}
-                platformNotes={c.platformNotes}
-                source={c.source}
-                lastVerifiedAt={c.lastVerifiedAt}
+                platformNotes={c.platformNotes ?? undefined}
+                source={c.redemptionUrl}
+                lastVerifiedAt={c.lastVerifiedAt ? new Date(c.lastVerifiedAt) : undefined}
               />
             ))}
           </>
@@ -187,12 +193,12 @@ const sidebarItems = [
             {inactive.map(c => (
               <CouponRow
                 code={c.code}
-                status={c.status}
+                status={c.status as any}
                 rewards={c.rewards}
                 redemptionUrl={c.redemptionUrl}
-                platformNotes={c.platformNotes}
-                source={c.source}
-                lastVerifiedAt={c.lastVerifiedAt}
+                platformNotes={c.platformNotes ?? undefined}
+                source={c.redemptionUrl}
+                lastVerifiedAt={c.lastVerifiedAt ? new Date(c.lastVerifiedAt) : undefined}
               />
             ))}
           </>

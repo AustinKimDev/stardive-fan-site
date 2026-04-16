@@ -1,20 +1,22 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import RarityBadge from '../components/RarityBadge.astro';
 import { buildMeta } from '../lib/seo';
+import { apiFetch } from '../lib/api';
+import type { ArtifactResponse, CharacterResponse } from '@stardive/shared';
 
-const entries = await getCollection('artifacts');
-
-const rarityOrder: Record<string, number> = { '5seong': 0, '4seong': 1, '3seong': 2, 'unknown': 3 };
-
-const artifacts = entries
-  .map(e => e.data)
-  .sort((a, b) => {
+let artifacts: ArtifactResponse[] = [];
+try {
+  const rarityOrder: Record<string, number> = { '5seong': 0, '4seong': 1, '3seong': 2, 'unknown': 3 };
+  const all = await apiFetch<ArtifactResponse[]>('/artifacts');
+  artifacts = all.sort((a, b) => {
     const ro = (rarityOrder[a.rarity] ?? 9) - (rarityOrder[b.rarity] ?? 9);
     if (ro !== 0) return ro;
-    return a.name_ko.localeCompare(b.name_ko, 'ko');
+    return a.nameKo.localeCompare(b.nameKo, 'ko');
   });
+} catch (e) {
+  console.warn('API unavailable, using empty data');
+}
 
 // 가챠용 5성 (픽업 + 선택)
 const art5seong = artifacts.filter(a => a.rarity === '5seong');
@@ -22,8 +24,13 @@ const art4seong = artifacts.filter(a => a.rarity === '4seong');
 const art3seong = artifacts.filter(a => a.rarity === '3seong');
 
 // 전용 캐릭터 이름 맵핑
-const charEntries = await getCollection('characters');
-const charMap = Object.fromEntries(charEntries.map(e => [e.data.slug, e.data.name_ko]));
+let charMap: Record<string, string> = {};
+try {
+  const charEntries = await apiFetch<CharacterResponse[]>('/characters');
+  charMap = Object.fromEntries(charEntries.map(c => [c.slug, c.nameKo]));
+} catch (e) {
+  console.warn('API unavailable, using empty data');
+}
 
 const meta = buildMeta({
   path: '/artifacts',
@@ -186,25 +193,19 @@ const sidebarItems = [
         <tbody>
           {art5seong.map(a => (
             <tr>
-              <td><RarityBadge rarity={a.rarity} /></td>
-              <td class="td-name">{a.name_ko}</td>
+              <td><RarityBadge rarity={a.rarity as any} /></td>
+              <td class="td-name">{a.nameKo}</td>
               <td class="td-exclusive">
-                {a.exclusive_character_slug ? (
-                  <a class="exclusive-link" href={`/characters/${a.exclusive_character_slug}`}>
-                    {charMap[a.exclusive_character_slug] ?? a.exclusive_character_slug}
+                {a.exclusiveCharacterSlug ? (
+                  <a class="exclusive-link" href={`/characters/${a.exclusiveCharacterSlug}`}>
+                    {charMap[a.exclusiveCharacterSlug] ?? a.exclusiveCharacterSlug}
                   </a>
                 ) : (
                   <span class="td-muted">—</span>
                 )}
               </td>
               <td class="td-source">
-                {a.source_url ? (
-                  <a class="source-link" href={a.source_url} target="_blank" rel="noreferrer">
-                    확률안내 ↗
-                  </a>
-                ) : (
-                  <span class="td-muted">—</span>
-                )}
+                <span class="td-muted">—</span>
               </td>
             </tr>
           ))}
@@ -231,25 +232,19 @@ const sidebarItems = [
         <tbody>
           {art4seong.map(a => (
             <tr>
-              <td><RarityBadge rarity={a.rarity} /></td>
-              <td class="td-name">{a.name_ko}</td>
+              <td><RarityBadge rarity={a.rarity as any} /></td>
+              <td class="td-name">{a.nameKo}</td>
               <td class="td-exclusive">
-                {a.exclusive_character_slug ? (
-                  <a class="exclusive-link" href={`/characters/${a.exclusive_character_slug}`}>
-                    {charMap[a.exclusive_character_slug] ?? a.exclusive_character_slug}
+                {a.exclusiveCharacterSlug ? (
+                  <a class="exclusive-link" href={`/characters/${a.exclusiveCharacterSlug}`}>
+                    {charMap[a.exclusiveCharacterSlug] ?? a.exclusiveCharacterSlug}
                   </a>
                 ) : (
                   <span class="td-muted">—</span>
                 )}
               </td>
               <td class="td-source">
-                {a.source_url ? (
-                  <a class="source-link" href={a.source_url} target="_blank" rel="noreferrer">
-                    확률안내 ↗
-                  </a>
-                ) : (
-                  <span class="td-muted">—</span>
-                )}
+                <span class="td-muted">—</span>
               </td>
             </tr>
           ))}
@@ -276,25 +271,19 @@ const sidebarItems = [
         <tbody>
           {art3seong.map(a => (
             <tr>
-              <td><RarityBadge rarity={a.rarity} /></td>
-              <td class="td-name">{a.name_ko}</td>
+              <td><RarityBadge rarity={a.rarity as any} /></td>
+              <td class="td-name">{a.nameKo}</td>
               <td class="td-exclusive">
-                {a.exclusive_character_slug ? (
-                  <a class="exclusive-link" href={`/characters/${a.exclusive_character_slug}`}>
-                    {charMap[a.exclusive_character_slug] ?? a.exclusive_character_slug}
+                {a.exclusiveCharacterSlug ? (
+                  <a class="exclusive-link" href={`/characters/${a.exclusiveCharacterSlug}`}>
+                    {charMap[a.exclusiveCharacterSlug] ?? a.exclusiveCharacterSlug}
                   </a>
                 ) : (
                   <span class="td-muted">—</span>
                 )}
               </td>
               <td class="td-source">
-                {a.source_url ? (
-                  <a class="source-link" href={a.source_url} target="_blank" rel="noreferrer">
-                    확률안내 ↗
-                  </a>
-                ) : (
-                  <span class="td-muted">—</span>
-                )}
+                <span class="td-muted">—</span>
               </td>
             </tr>
           ))}

@@ -1,19 +1,24 @@
 ---
-import { getCollection } from 'astro:content';
+export const prerender = false;
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import GuideCategoryBadge from '../../components/GuideCategoryBadge.astro';
 import { buildMeta } from '../../lib/seo';
+import { apiFetch } from '../../lib/api';
+import type { GuideResponse } from '@stardive/shared';
 
-export const prerender = true;
+const { slug } = Astro.params;
 
-export async function getStaticPaths() {
-  const entries = await getCollection('guides');
-  return entries
-    .filter(e => e.data.sections && e.data.sections.length > 0)
-    .map(e => ({ params: { slug: e.data.slug }, props: { guide: e.data } }));
+let guide: GuideResponse | null = null;
+try {
+  const all = await apiFetch<GuideResponse[]>('/guides');
+  guide = all.find(g => g.slug === slug) ?? null;
+} catch (e) {
+  console.warn('API unavailable, using empty data');
 }
 
-const { guide } = Astro.props;
+if (!guide) {
+  return Astro.redirect('/guides');
+}
 
 const catLabels: Record<string, string> = {
   all: '전체', reroll: '리세마라', tier: '티어', event: '이벤트',
@@ -34,8 +39,9 @@ const meta = buildMeta({
   type: 'article',
 });
 
-function formatDate(d: Date): string {
-  return d.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+function formatDate(d: string | null | undefined): string {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
 }
 ---
 
@@ -144,7 +150,7 @@ function formatDate(d: Date): string {
 >
   <div class="guide-header">
     <div class="guide-meta-row">
-      <GuideCategoryBadge category={guide.category} />
+      <GuideCategoryBadge category={guide.category as any} />
       <span class="meta-dim">{formatDate(guide.publishedAt)}</span>
       {guide.author && (
         <>

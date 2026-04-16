@@ -1,25 +1,27 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CharacterCard from '../components/CharacterCard.astro';
 import { buildMeta } from '../lib/seo';
+import { apiFetch } from '../lib/api';
+import type { CharacterResponse } from '@stardive/shared';
 
-const entries = await getCollection('characters');
-
-const rarityOrder: Record<string, number> = {
-  '5seong': 0,
-  'unknown': 1,
-  '4seong': 2,
-  '3seong': 3,
-};
-
-const characters = entries
-  .map(e => e.data)
-  .sort((a, b) => {
+let characters: CharacterResponse[] = [];
+try {
+  const rarityOrder: Record<string, number> = {
+    '5seong': 0,
+    'unknown': 1,
+    '4seong': 2,
+    '3seong': 3,
+  };
+  const all = await apiFetch<CharacterResponse[]>('/characters');
+  characters = all.sort((a, b) => {
     const ro = (rarityOrder[a.rarity] ?? 9) - (rarityOrder[b.rarity] ?? 9);
     if (ro !== 0) return ro;
-    return a.name_ko.localeCompare(b.name_ko, 'ko');
+    return a.nameKo.localeCompare(b.nameKo, 'ko');
   });
+} catch (e) {
+  console.warn('API unavailable, using empty data');
+}
 
 const regions = [
   { key: 'all', label: '전체' },
@@ -183,14 +185,14 @@ const sidebarItems = [
       >
         <CharacterCard
           slug={c.slug}
-          name_ko={c.name_ko}
-          name_en={c.name_en}
-          element={c.element}
-          style={c.style}
-          rarity={c.rarity}
+          name_ko={c.nameKo}
+          name_en={c.nameEn}
+          element={c.element as any}
+          style={c.style as any}
+          rarity={c.rarity as any}
           role={c.role}
           portrait={c.portrait}
-          region={c.region}
+          region={c.region as any}
         />
       </div>
     ))}
