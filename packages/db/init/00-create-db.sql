@@ -1,11 +1,13 @@
 -- stardive-fan-site DB 초기화
--- 실행: docker exec -i postgres-db psql -U postgres < packages/db/init/00-create-db.sql
+-- 사용법:
+--   export STARDIVE_DB_PW="여기에_비밀번호"
+--   envsubst < packages/db/init/00-create-db.sql | docker exec -i postgres-db psql -U apitots -d postgres
 
 -- 유저 생성 (이미 있으면 무시)
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'stardive') THEN
-    CREATE ROLE stardive WITH LOGIN PASSWORD 'stardive2026';
+    CREATE ROLE stardive WITH LOGIN PASSWORD '${STARDIVE_DB_PW}';
   END IF;
 END
 $$;
