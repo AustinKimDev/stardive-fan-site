@@ -16,12 +16,12 @@
     "postgres": "^3.4.7",
     "dotenv": "^16.4.7",
     "zod": "^3.23.8",
+    "tsx": "^4.19.0",
     "@stardive/db": "workspace:*",
     "@stardive/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
-    "tsx": "^4.19.0",
     "typescript": "^5.6.3"
   }
 }
