@@ -7,7 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 import yaml from '@rollup/plugin-yaml';
 
 export default defineConfig({
-  site: 'https://stardive.example.com',
+  site: 'https://mongil.peo.kr',
   output: 'server',
   adapter: node({ mode: 'standalone' }),
   integrations: [

@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /api/
-Sitemap: https://stardive.example.com/sitemap-index.xml
+Sitemap: https://mongil.peo.kr/sitemap-index.xml
