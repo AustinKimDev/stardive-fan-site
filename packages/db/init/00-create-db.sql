@@ -5,7 +5,7 @@
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'stardive') THEN
-    CREATE ROLE stardive WITH LOGIN PASSWORD 'stardive_2026!';
+    CREATE ROLE stardive WITH LOGIN PASSWORD 'stardive2026';
   END IF;
 END
 $$;

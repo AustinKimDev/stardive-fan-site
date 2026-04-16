@@ -7,7 +7,9 @@
  * Exits with code 1 if any assertion fails.
  */
 
-import 'dotenv/config';
+import { config } from 'dotenv';
+import { resolve } from 'node:path';
+config({ path: resolve(import.meta.dirname, '../../../.env') });
 import { createDb } from '../src/client.js';
 import { characters, coupons, artifacts, guides, tiers } from '../src/schema/index.js';
 import { count, isNull } from 'drizzle-orm';

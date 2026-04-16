@@ -8,7 +8,9 @@
  *   - coupons: onConflictDoNothing by code
  */
 
-import 'dotenv/config';
+import { config } from 'dotenv';
+import { resolve as resolvePath } from 'node:path';
+config({ path: resolvePath(import.meta.dirname, '../../../.env') });
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve, join, basename, extname } from 'node:path';
 import yaml from 'js-yaml';
