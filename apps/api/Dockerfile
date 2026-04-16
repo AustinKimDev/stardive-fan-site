@@ -8,7 +8,7 @@ COPY apps/api/package.json apps/api/
 COPY packages/db/package.json packages/db/
 COPY packages/shared/package.json packages/shared/
 
-# Install dependencies (allow fallback when lockfile is stale)
+# Install ALL deps (tsx is devDep but needed for runtime)
 RUN pnpm install --frozen-lockfile 2>/dev/null || pnpm install --no-frozen-lockfile
 
 # Copy source files
@@ -16,7 +16,7 @@ COPY packages/db/ packages/db/
 COPY packages/shared/ packages/shared/
 COPY apps/api/ apps/api/
 
-ENV NODE_ENV=production
+# .env is mounted via docker-compose env_file, not baked in
 ENV PORT=3001
 EXPOSE 3001
 
