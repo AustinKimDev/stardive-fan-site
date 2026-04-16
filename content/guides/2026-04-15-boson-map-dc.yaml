@@ -1,8 +1,40 @@
 slug: boson-map-dc
-title: "몬길 스타다이브 보물상자 위치 지도"
+title: "각 맵별 보물상자 위치"
 category: map
-summary: "디시인사이드 몬길 스타다이브 마이너 갤러리 유저가 공유한 보물상자 위치 지도. 필드별 상자 위치 스샷 정리."
-externalUrl: https://gall.dcinside.com/mgallery/board/view/?id=ahsrlf2&no=17756&page=1
-sourceLabel: "디시인사이드 몬길 스타다이브 마이너 갤러리"
-author: "익명 유저 (디시 ahsrlf2)"
+summary: "모든 필드의 보물상자 위치를 맵별로 정리. 오즈의 퍼즐 공략 포함."
+author: "먼지 (디시인사이드)"
+sourceUrl: https://gall.dcinside.com/mgallery/board/view/?id=ahsrlf2&no=17756
+sourceLabel: "디시인사이드 몬길 스타다이브 마이너갤러리"
 publishedAt: 2026-04-15
+sections:
+  - area: 하나이스
+    images: ["/assets/guides/treasure-map/map-01.jpg", "/assets/guides/treasure-map/map-02.jpg"]
+  - area: 벤ㅌ스
+    images: ["/assets/guides/treasure-map/map-03.jpg", "/assets/guides/treasure-map/map-04.jpg"]
+  - area: 벤ㅌ스숲 깊은곳
+    images: ["/assets/guides/treasure-map/map-05.jpg", "/assets/guides/treasure-map/map-06.jpg"]
+  - area: 브리즈빌 가는 길
+    images: ["/assets/guides/treasure-map/map-07.jpg", "/assets/guides/treasure-map/map-08.jpg"]
+  - area: 브리즈빌
+    images: ["/assets/guides/treasure-map/map-09.jpg", "/assets/guides/treasure-map/map-10.jpg"]
+  - area: 고블린 전초기지
+    images: ["/assets/guides/treasure-map/map-11.jpg", "/assets/guides/treasure-map/map-12.jpg"]
+  - area: 루포룸 산 입구
+    images: ["/assets/guides/treasure-map/map-13.jpg", "/assets/guides/treasure-map/map-14.jpg"]
+  - area: 시험의 협곡
+    images: ["/assets/guides/treasure-map/map-15.jpg", "/assets/guides/treasure-map/map-16.jpg"]
+  - area: 파우케스 동굴
+    images: ["/assets/guides/treasure-map/map-17.jpg", "/assets/guides/treasure-map/map-18.jpg"]
+    note: "오즈의 퍼즐 — 불속성 필요. 기둥 3개에 불붙이기 (평타 공격)"
+  - area: 사냥꾼의 길
+    images: ["/assets/guides/treasure-map/map-19.jpg", "/assets/guides/treasure-map/map-20.jpg"]
+  - area: 나투라 수도원
+    images: ["/assets/guides/treasure-map/map-21.jpg", "/assets/guides/treasure-map/map-22.jpg"]
+    note: "오즈의 퍼즐 — 발판 밟아서 빛 한곳으로 모으기 (맨 오른쪽 → 맨 왼쪽 → 가운데 순)"
+  - area: 프렐리움 산 입구
+    images: ["/assets/guides/treasure-map/map-23.jpg", "/assets/guides/treasure-map/map-24.jpg"]
+    note: "오즈의 퍼즐 — 얼음속성 + 불속성 필요. 기둥에 빛 들어오는 순으로 속성 스킬 사용 (평타 불가)"
+  - area: 베스티지아 외곽
+    images: ["/assets/guides/treasure-map/map-25.jpg", "/assets/guides/treasure-map/map-26.jpg"]
+  - area: 베스티지아
+    images: ["/assets/guides/treasure-map/map-27.jpg"]

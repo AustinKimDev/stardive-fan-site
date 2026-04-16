@@ -1,0 +1,188 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GuideCategoryBadge from '../../components/GuideCategoryBadge.astro';
+import { buildMeta } from '../../lib/seo';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const entries = await getCollection('guides');
+  return entries
+    .filter(e => e.data.sections && e.data.sections.length > 0)
+    .map(e => ({ params: { slug: e.data.slug }, props: { guide: e.data } }));
+}
+
+const { guide } = Astro.props;
+
+const catLabels: Record<string, string> = {
+  all: '전체', reroll: '리세마라', tier: '티어', event: '이벤트',
+  tip: '팁', map: '지도', community: '커뮤니티',
+};
+
+const validCats = ['all', 'reroll', 'tier', 'community', 'event', 'tip', 'map'] as const;
+type CatParam = typeof validCats[number];
+const sidebarItems = validCats.map(cat => ({
+  label: catLabels[cat],
+  href: cat === 'all' ? '/guides' : `/guides?cat=${cat}`,
+}));
+
+const meta = buildMeta({
+  path: `/guides/${guide.slug}`,
+  title: guide.title,
+  description: guide.summary,
+  type: 'article',
+});
+
+function formatDate(d: Date): string {
+  return d.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+}
+---
+
+<style>
+  .guide-header {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .guide-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .guide-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--fg-primary);
+    margin: 0 0 6px;
+  }
+  .guide-summary {
+    font-size: 0.875rem;
+    color: var(--fg-secondary);
+    margin: 0;
+    line-height: 1.5;
+  }
+  .meta-dim {
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+  }
+  .meta-sep {
+    color: var(--border-strong);
+    font-size: 0.75rem;
+  }
+
+  /* 섹션 */
+  .area-section {
+    margin-bottom: 32px;
+  }
+  .area-heading {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--fg-primary);
+    margin: 0 0 10px;
+    padding: 6px 10px;
+    background: var(--bg-raised);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 2px 2px 0;
+    letter-spacing: -0.01em;
+  }
+  .image-grid {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+  .image-grid img {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    display: block;
+  }
+  .area-note {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: oklch(0.76 0.14 55 / 0.08);
+    border: 1px solid oklch(0.76 0.14 55 / 0.25);
+    border-radius: 2px;
+    font-size: 0.8125rem;
+    color: var(--fg-secondary);
+    line-height: 1.5;
+  }
+  .area-note::before {
+    content: "메모 ";
+    font-weight: 700;
+    color: oklch(0.72 0.14 55);
+  }
+
+  /* 출처 푸터 */
+  .source-footer {
+    margin-top: 32px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 0.6875rem;
+    color: var(--fg-dim);
+    line-height: 1.6;
+  }
+  .source-footer a {
+    color: var(--fg-dim);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .source-footer a:hover {
+    color: var(--fg-secondary);
+  }
+</style>
+
+<BaseLayout
+  meta={meta}
+  sidebarTitle="공략"
+  sidebarItems={sidebarItems}
+  fullWidth={false}
+>
+  <div class="guide-header">
+    <div class="guide-meta-row">
+      <GuideCategoryBadge category={guide.category} />
+      <span class="meta-dim">{formatDate(guide.publishedAt)}</span>
+      {guide.author && (
+        <>
+          <span class="meta-sep">·</span>
+          <span class="meta-dim">{guide.author}</span>
+        </>
+      )}
+    </div>
+    <h1 class="guide-title">{guide.title}</h1>
+    <p class="guide-summary">{guide.summary}</p>
+  </div>
+
+  {guide.sections && guide.sections.map((section) => (
+    <div class="area-section">
+      <h3 class="area-heading">{section.area}</h3>
+      <div class="image-grid">
+        {section.images.map((src, idx) => (
+          <img
+            src={src}
+            alt={`${section.area} 보물상자 위치 ${idx + 1}`}
+            loading="lazy"
+            decoding="async"
+          />
+        ))}
+      </div>
+      {section.note && (
+        <p class="area-note">{section.note}</p>
+      )}
+    </div>
+  ))}
+
+  <div class="source-footer">
+    출처: {guide.sourceLabel ?? '미상'}
+    {guide.sourceUrl && (
+      <>
+        {' '}|{' '}
+        원글: <a href={guide.sourceUrl} target="_blank" rel="noreferrer noopener">{guide.sourceUrl}</a>
+      </>
+    )}
+  </div>
+</BaseLayout>

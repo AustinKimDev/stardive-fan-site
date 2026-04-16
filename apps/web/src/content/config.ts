@@ -106,10 +106,16 @@ const guides = defineCollection({
     category: z.enum(['reroll', 'tier', 'community', 'event', 'tip', 'map']),
     summary: z.string(),
     externalUrl: z.string().url().optional(),
+    sourceUrl: z.string().url().optional(),
     sourceLabel: z.string().optional(),
     author: z.string().optional(),
     publishedAt: z.coerce.date(),
     verifiedAt: z.coerce.date().optional(),
+    sections: z.array(z.object({
+      area: z.string(),
+      images: z.array(z.string()),
+      note: z.string().optional(),
+    })).optional(),
   }),
 });
 

@@ -50,7 +50,7 @@ const meta = buildMeta({
       item: {
         '@type': 'Article',
         name: g.title,
-        url: g.externalUrl ?? `https://stardive.fans/guides/${g.slug}`,
+        url: `https://stardive.fans/guides/${g.slug}`,
         description: g.summary,
       },
     })),
@@ -207,20 +207,9 @@ function formatDate(d: Date): string {
               <td><GuideCategoryBadge category={g.category} /></td>
               <td>
                 <div class="td-title-wrap">
-                  {g.externalUrl ? (
-                    <a
-                      href={g.externalUrl}
-                      class="guide-link"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {g.title} ↗
-                    </a>
-                  ) : (
-                    <a href={`/guides/${g.slug}`} class="guide-link">
-                      {g.title}
-                    </a>
-                  )}
+                  <a href={`/guides/${g.slug}`} class="guide-link">
+                    {g.title}
+                  </a>
                   <p class="guide-summary">{g.summary}</p>
                 </div>
               </td>
