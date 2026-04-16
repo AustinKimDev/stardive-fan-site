@@ -4,7 +4,7 @@
     "build": { "dependsOn": ["^build"], "outputs": ["dist/**", ".astro/**"] },
     "dev": { "cache": false, "persistent": true },
     "lint": {},
-    "typecheck": {},
+    "typecheck": { "dependsOn": ["^typecheck"] },
     "test": {}
   }
 }

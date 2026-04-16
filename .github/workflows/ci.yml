@@ -41,5 +41,5 @@ jobs:
             cd ~/workspace/stardive-fan-site
             git pull origin main
             cd infra
-            docker compose up -d --build mongil-web
+            docker compose up -d --build mongil-web mongil-api
             echo "✓ deployed at $(date -u)"

@@ -19,27 +19,27 @@ services:
       retries: 3
       start_period: 10s
 
-  # Phase 1에서 활성화 예정
-  # mongil-api:
-  #   build:
-  #     context: ..
-  #     dockerfile: apps/api/Dockerfile
-  #   container_name: mongil-api
-  #   restart: unless-stopped
-  #   expose: ["3001"]
-  #   environment:
-  #     NODE_ENV: production
-  #     HOST: 0.0.0.0
-  #     PORT: "3001"
-  #     DATABASE_URL: ${DATABASE_URL}
-  #     AUTH_SECRET: ${AUTH_SECRET}
-  #     GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-  #     GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-  #     DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID}
-  #     DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET}
-  #     ADMIN_EMAILS: ${ADMIN_EMAILS}
-  #   networks:
-  #     - side-network
+  mongil-api:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    container_name: mongil-api
+    restart: unless-stopped
+    expose: ["3001"]
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "3001"
+      FRONTEND_URL: https://mongil.peo.kr
+    networks:
+      - side-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3001/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   # Phase 1: 크롤러 워커 (pg-boss + Playwright)
   # mongil-worker:
