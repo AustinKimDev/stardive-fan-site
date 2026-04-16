@@ -26,15 +26,17 @@
 
 ## 2) Caddy 설정 추가
 
-`yohan-server-infra/caddy/Caddyfile` 에 아래 스니펫을 추가:
+`yohan-server-infra/caddy/sites/` 에 사이트 파일 복사:
 
+```bash
+# Phase 0: 프론트엔드만
+cp stardive-fan-site/infra/caddy/mongil.peo.kr.caddy yohan-server-infra/caddy/sites/
+
+# Phase 1 때: API도 추가 (mongil-api 컨테이너 기동 후에만)
+# cp stardive-fan-site/infra/caddy/mongil-api.peo.kr.caddy yohan-server-infra/caddy/sites/
 ```
-# infra/caddy-snippet.Caddyfile 의 mongil.peo.kr 블록 전체를 복붙
-```
 
-파일 위치: `/Users/jidong/workspace/side/stardive-fan-site/infra/caddy-snippet.Caddyfile` 참조.
-
-**mongil-api.peo.kr 블록은 Phase 1 활성화 시점까지 주석 유지.** 지금 열면 업스트림 없이 502만 뜸.
+**mongil-api.peo.kr.caddy는 Phase 1에서 mongil-api 컨테이너 기동 후 복사.** 지금 넣으면 502.
 
 설정 적용 (무중단 리로드):
 ```bash

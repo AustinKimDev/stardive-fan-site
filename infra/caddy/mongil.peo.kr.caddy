@@ -1,0 +1,30 @@
+# mongil.peo.kr — 몬길 스타다이브 팬사이트 (Astro SSR)
+mongil.peo.kr {
+	reverse_proxy mongil-web:3000 {
+		header_up Host {host}
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+	}
+
+	@static {
+		path *.css *.js *.png *.jpg *.jpeg *.webp *.svg *.woff *.woff2
+	}
+	header @static Cache-Control "public, max-age=31536000, immutable"
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	log {
+		output file /var/log/caddy/mongil.peo.kr.log {
+			roll_size 10mb
+			roll_keep 5
+		}
+	}
+
+	encode gzip zstd
+}

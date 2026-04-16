@@ -1,0 +1,29 @@
+# mongil-api.peo.kr — 몬길 API (Phase 1에서 활성화)
+# 아직 mongil-api 컨테이너 없으면 이 파일 yohan-server-infra에 복사하지 마세요 (502)
+mongil-api.peo.kr {
+	reverse_proxy mongil-api:3001 {
+		header_up Host {host}
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Access-Control-Allow-Origin "https://mongil.peo.kr"
+		Access-Control-Allow-Credentials "true"
+		Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+		Access-Control-Allow-Headers "Content-Type, Authorization"
+		-Server
+	}
+
+	log {
+		output file /var/log/caddy/mongil-api.peo.kr.log {
+			roll_size 10mb
+			roll_keep 5
+		}
+	}
+
+	encode gzip zstd
+}
