@@ -1,0 +1,27 @@
+{
+  "name": "@stardive/api",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "start": "node --import tsx src/index.ts"
+  },
+  "dependencies": {
+    "hono": "^4.6.0",
+    "@hono/node-server": "^1.13.0",
+    "better-auth": "^1.2.0",
+    "drizzle-orm": "^0.39.0",
+    "postgres": "^3.4.7",
+    "dotenv": "^16.4.7",
+    "zod": "^3.23.8",
+    "@stardive/db": "workspace:*",
+    "@stardive/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.3"
+  }
+}
